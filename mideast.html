@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <title>MENA latency tracker</title>
+    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'/>
+    <meta name='description' content='A website for measuring network latency from your browser to various cloud provider datacenters in the Middle East and North Africa (MENA) region.'>
+    <style>
+        :root {
+            --background: #000000;
+            --foreground: #f4f4f4;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --secondary: #000000;
+            --border: #333333;
+            --accent: #f59e42;
+            --table-header: #000000;
+            --table-row: #000000;
+            --table-row-alt: #111111;
+            --error: #ef4444;
+            --success: #22c55e;
+        }
+        body {
+            background: var(--background);
+            color: var(--foreground);
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+            max-width: 48rem;
+            margin: 0 auto;
+            padding: 2rem 0.5rem 0 0.5rem;
+            line-height: 1.6;
+            font-size: 1.08rem;
+            transition: background 0.3s, color 0.3s;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        header h1 {
+            font-size: 2.1rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin: 0;
+        }
+        hr {
+            height: 1px;
+            background: var(--border);
+            border: none;
+            margin: 1.5rem 0;
+        }
+        table {
+            width: 100%;
+            margin: 2rem 0 1.5rem 0;
+            border-radius: 0.7rem;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-collapse: separate;
+            box-shadow: 0 2px 16px 0 rgba(0,0,0,0.08);
+        }
+        thead tr {
+            background: var(--table-header);
+        }
+        thead th {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 1.1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        tbody tr {
+            background: var(--table-row);
+            transition: background 0.2s;
+        }
+        tbody tr:nth-child(even) {
+            background: var(--table-row-alt);
+        }
+        tbody tr:hover {
+            background: var(--secondary);
+        }
+        th, td {
+            padding: 0.7rem 0.6rem;
+            text-align: left;
+        }
+        td.service-name {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 1.05rem;
+        }
+        button, .dark-toggle {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.8rem 1.2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 8px 0 rgba(59,130,246,0.08);
+            transition: background 0.2s, color 0.2s;
+            margin-bottom: 1.2rem;
+        }
+        button:disabled {
+            background: #444a;
+            color: #bbb;
+            cursor: not-allowed;
+        }
+        button:hover:not(:disabled), .dark-toggle:hover {
+            background: var(--primary-hover);
+        }
+        .latency {
+            width: 6.5rem;
+            text-align: center;
+            font-family: 'JetBrains Mono', 'Fira Mono', 'Consolas', monospace;
+            font-size: 1.05rem;
+        }
+        .note {
+            text-align: center;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 2.5rem;
+        }
+        .header-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .dark-toggle, .notification-toggle {
+            background: var(--secondary);
+            color: var(--foreground);
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            border: 1px solid var(--border);
+            box-shadow: none;
+            margin-bottom: 0;
+        }
+        .notification-toggle.disabled {
+            background: var(--error);
+            color: #fff;
+        }
+        a {
+            color: var(--accent);
+            text-decoration: underline;
+            transition: color 0.2s;
+        }
+        a:hover {
+            color: var(--primary);
+        }
+        @media (max-width: 600px) {
+            body {
+                font-size: 0.98rem;
+                padding: 0.5rem 0.1rem 0 0.1rem;
+            }
+            header {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+            header h1 {
+                font-size: 1.2rem;
+                text-align: center;
+            }
+            .header-controls {
+                gap: 0.3rem;
+            }
+            .dark-toggle, .notification-toggle {
+                font-size: 0.95rem;
+                padding: 0.4rem 0.8rem;
+            }
+            table {
+                font-size: 0.93rem;
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+                border-radius: 0.4rem;
+                box-shadow: none;
+            }
+            th, td {
+                padding: 0.5rem 0.3rem;
+            }
+            button {
+                font-size: 1rem;
+                padding: 0.7rem 1rem;
+            }
+        }
+        body.light {
+            --background: #f7f7f9;
+            --foreground: #23272a;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --secondary: #e5e7eb;
+            --border: #d1d5db;
+            --accent: #f59e42;
+            --table-header: #e5e7eb;
+            --table-row: #fff;
+            --table-row-alt: #f3f4f6;
+        }
+    </style>
+    <!-- Chart.js CDN for graph rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer data-domain="cloudping.info" src="https://plausible.io/js/script.js"></script>
+    <script>window.plausible = window.plausible || function () {
+        (window.plausible.q = window.plausible.q || []).push(arguments)
+    }</script>
+</head>
+<body>
+<header>
+    <h1>MENA latency tracker</h1>
+    <div class="header-controls">
+        <button class="notification-toggle" id="notificationToggle" aria-label="Toggle sound notifications">🔔 Sound On</button>
+        <button class="dark-toggle" id="darkToggle" aria-label="Toggle dark mode">🌙 Dark Mode</button>
+    </div>
+</header>
+<hr/>
+<div style="max-width: 100%; margin: 0 auto 2rem auto;">
+  <canvas id="latencyChart" style="width:100%;max-width:900px;height:260px;"></canvas>
+</div>
+<main>
+    <p>Click the "HTTP Ping" button to measure latency from your browser to various cloud provider datacenters in the Middle East and North Africa (MENA) region.</p>
+    <p>
+        <button id='pingButton'>HTTP Ping</button>
+    </p>
+    <table>
+        <thead>
+        <tr>
+            <th>Region</th>
+            <th>Latency</th>
+        </tr>
+        </thead>
+        <!-- AWS Middle East Regions -->
+        <tbody>
+        <tr>
+            <td class='service-name' colspan="2"><a href='https://aws.amazon.com/'>Amazon Web Services</a>&trade;</td>
+        </tr>
+        <tr>
+            <td>il-central-1 (Israel)</td>
+            <td class='latency' pingUrl='https://dynamodb.il-central-1.amazonaws.com/ping'>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>me-south-1 (Bahrain)</td>
+            <td class='latency' pingUrl='https://dynamodb.me-south-1.amazonaws.com/ping'>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>me-central-1 (UAE)</td>
+            <td class='latency' pingUrl='https://streams.dynamodb.me-central-1.amazonaws.com/ping'>&nbsp;</td>
+        </tr>
+        </tbody>
+        <!-- Google Cloud Middle East Regions -->
+        <tbody>
+        <tr>
+            <td class='service-name' colspan="2"><a href='https://cloud.google.com/'>Google Cloud Platform</a></td>
+        </tr>
+        <tr>
+            <td>me-central1 (Qatar)</td>
+            <td class='latency' pingUrl='https://me-central1-5tkroniexa-ww.a.run.app/ping'>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>me-central2 (Saudi Arabia)</td>
+            <td class='latency' pingUrl='https://me-central2-5tkroniexa-wx.a.run.app/ping'>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>me-west1 (Israel)</td>
+            <td class='latency' pingUrl='https://me-west1-5tkroniexa-zf.a.run.app/ping'>&nbsp;</td>
+        </tr>
+        </tbody>
+        <!-- Vultr Middle East Region -->
+        <tbody>
+        <tr>
+            <td class='service-name' colspan="2"><a href='https://www.vultr.com/'>Vultr</a></td>
+        </tr>
+        <tr>
+            <td>Tel Aviv (Israel)</td>
+            <td class='latency' pingUrl='https://tlv-il-ping.vultr.com/ping' supportsCors='false'>&nbsp;</td>
+        </tr>
+        </tbody>
+    </table>
+    
+    <!-- Low Latency Events Table -->
+    <div id="lowLatencySection" style="display: none;">
+        <h2 style="font-size: 1.5rem; margin-top: 3rem; margin-bottom: 1rem; color: var(--success);">🎯 Low Latency Events (&lt;100ms)</h2>
+        <table id="lowLatencyTable">
+            <thead>
+            <tr>
+                <th>Region</th>
+                <th>Time</th>
+                <th>Latency</th>
+            </tr>
+            </thead>
+            <tbody id="lowLatencyTableBody">
+            </tbody>
+        </table>
+        <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: var(--accent);">
+            <button id="clearLowLatencyButton" style="background: var(--error); font-size: 0.9rem; padding: 0.5rem 1rem;">Clear History</button>
+        </p>
+    </div>
+</main>
+<footer class="footer">
+    <hr/>
+    <p>MENA latency tracker, by SanGraphic based on Cloudping.info</p>
+    <p style="font-size:0.95em;color:var(--accent);">Copyright &copy; 2010-2024 Michael Leonhard. Amazon Web Services and AWS are trademarks of Amazon.com, Inc. or its affiliates in the United States and/or other countries.</p>
+</footer>
+<script type='text/javascript'>
+    // Notification toggle
+    let soundNotificationsEnabled = true;
+    const notificationToggle = document.getElementById('notificationToggle');
+    
+    function setSoundNotifications(enabled) {
+        soundNotificationsEnabled = enabled;
+        if (enabled) {
+            notificationToggle.innerHTML = '🔔 Sound On';
+            notificationToggle.classList.remove('disabled');
+        } else {
+            notificationToggle.innerHTML = '🔇 Sound Off';
+            notificationToggle.classList.add('disabled');
+        }
+        localStorage.setItem('soundNotifications', enabled ? 'enabled' : 'disabled');
+    }
+    
+    notificationToggle.addEventListener('click', function () {
+        setSoundNotifications(!soundNotificationsEnabled);
+    });
+    
+    // On load, set sound notifications from localStorage (default: enabled)
+    (function() {
+        const saved = localStorage.getItem('soundNotifications');
+        if (saved === 'disabled') setSoundNotifications(false);
+        else setSoundNotifications(true);
+    })();
+
+    // Dark mode toggle
+    const darkToggle = document.getElementById('darkToggle');
+    function setDarkMode(isDark) {
+        if (isDark) {
+            document.body.classList.remove('light');
+            darkToggle.innerHTML = '🌙 Dark Mode';
+        } else {
+            document.body.classList.add('light');
+            darkToggle.innerHTML = '☀️ Light Mode';
+        }
+        localStorage.setItem('darkMode', isDark ? 'dark' : 'light');
+    }
+    darkToggle.addEventListener('click', function () {
+        const isDark = !document.body.classList.contains('light');
+        setDarkMode(!isDark);
+    });
+    // On load, set mode from localStorage or system preference
+    (function() {
+        const saved = localStorage.getItem('darkMode');
+        if (saved === 'light') setDarkMode(false);
+        else if (saved === 'dark') setDarkMode(true);
+        else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) setDarkMode(false);
+        else setDarkMode(true);
+    })();
+
+    function currentTimeMillis() {
+        return (new Date()).getTime();
+    }
+    async function fetchUrl(url, supportsCors, abortController) {
+        const OPTS = {
+            signal: abortController.signal,
+            'cache': 'no-store',
+            'credentials': 'omit',
+            'redirect': 'error'
+        };
+        if (supportsCors) {
+            await fetch(url, OPTS);
+        } else {
+            try {
+                await fetch(url, OPTS);
+            } catch (e) {
+                if (e instanceof TypeError) {
+                    // CORS error expected for some endpoints
+                } else {
+                    throw e;
+                }
+            }
+        }
+    }
+    async function doBox(box) {
+        let timedOut = false;
+        try {
+            const abortController = new AbortController();
+            const timeoutId = setTimeout(() => {
+                timedOut = true;
+                abortController.abort();
+            }, 5 * 1000);
+            const pingUrl = box.getAttribute('pingUrl');
+            const supportsCors = box.getAttribute('supportsCors') !== 'false';
+            box.innerHTML = '<span style="color:var(--accent)">connecting</span>';
+            await fetchUrl(pingUrl, supportsCors, abortController);
+            box.innerHTML = '<span style="color:var(--accent)">pinging</span>';
+            const startTime = currentTimeMillis();
+            await fetchUrl(pingUrl, supportsCors, abortController);
+            const endTime = currentTimeMillis();
+            const elapsed = endTime - startTime;
+            let color = 'var(--success)';
+            if (elapsed < 60) {
+                color = 'var(--success)';
+            } else if (elapsed < 100) {
+                color = '#facc15'; // yellow-400
+            } else {
+                color = 'var(--error)';
+            }
+            box.innerHTML = `<span style="color:${color}">${elapsed} ms</span>`;
+            clearTimeout(timeoutId);
+            
+            // Trigger sound alert and log event if latency is below 100ms
+            if (elapsed < 100) {
+                const regionName = box.closest('tr').querySelector('td').innerText.trim();
+                addLowLatencyEvent(regionName, elapsed);
+                playLowLatencyAlert();
+            }
+        } catch (e) {
+            if (timedOut && e instanceof DOMException && (e.name === 'AbortError')) {
+                box.innerHTML = `<span style="color:var(--error)">timeout</span>`;
+            } else {
+                box.innerHTML = `<span style="color:var(--error)">error</span>`;
+            }
+        }
+    }
+    async function worker(boxes) {
+        while (true) {
+            let box = boxes.pop();
+            if (box === undefined) {
+                break;
+            }
+            await doBox(box);
+        }
+    }
+    const pingButton = document.getElementById('pingButton');
+    pingButton.addEventListener('click', async function () {
+        pingButton.setAttribute('disabled', 'disabled');
+        let latencyBoxes = Array.from(document.querySelectorAll('.latency'));
+        latencyBoxes.reverse();
+        await Promise.all([
+            worker(latencyBoxes),
+            worker(latencyBoxes),
+            worker(latencyBoxes),
+            worker(latencyBoxes),
+            worker(latencyBoxes)
+        ]);
+        pingButton.removeAttribute('disabled');
+    });
+
+    // --- Low Latency Events Tracking ---
+    let lowLatencyEvents = [];
+    const maxLowLatencyEvents = 50;
+    
+    function addLowLatencyEvent(regionName, latency) {
+        const now = new Date();
+        const timeString = now.toLocaleString([], {
+            month: '2-digit',
+            day: '2-digit', 
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
+        
+        const event = {
+            region: regionName,
+            time: timeString,
+            latency: latency,
+            timestamp: now.getTime()
+        };
+        
+        lowLatencyEvents.unshift(event); // Add to beginning
+        
+        // Keep only the most recent events
+        if (lowLatencyEvents.length > maxLowLatencyEvents) {
+            lowLatencyEvents = lowLatencyEvents.slice(0, maxLowLatencyEvents);
+        }
+        
+        updateLowLatencyTable();
+    }
+    
+    function updateLowLatencyTable() {
+        const section = document.getElementById('lowLatencySection');
+        const tbody = document.getElementById('lowLatencyTableBody');
+        
+        if (lowLatencyEvents.length === 0) {
+            section.style.display = 'none';
+            return;
+        }
+        
+        section.style.display = 'block';
+        tbody.innerHTML = '';
+        
+        lowLatencyEvents.forEach(event => {
+            const row = document.createElement('tr');
+            let latencyColor = 'var(--success)';
+            if (event.latency >= 60) {
+                latencyColor = '#facc15'; // yellow
+            }
+            
+            row.innerHTML = `
+                <td style="font-weight: 500;">${event.region}</td>
+                <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.95rem;">${event.time}</td>
+                <td style="font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; color: ${latencyColor}; font-weight: 600;">${event.latency} ms</td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+    
+    function clearLowLatencyEvents() {
+        lowLatencyEvents = [];
+        updateLowLatencyTable();
+    }
+    
+    // Clear button event listener
+    document.addEventListener('DOMContentLoaded', function() {
+        const clearButton = document.getElementById('clearLowLatencyButton');
+        if (clearButton) {
+            clearButton.addEventListener('click', clearLowLatencyEvents);
+        }
+    });
+
+    // --- Sound notification setup ---
+    let isPlayingAlert = false;
+    function createDingSound() {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
+        
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.3);
+        
+        return new Promise(resolve => {
+            oscillator.onended = resolve;
+        });
+    }
+    
+    async function playLowLatencyAlert() {
+        if (isPlayingAlert || !soundNotificationsEnabled) return;
+        isPlayingAlert = true;
+        
+        for (let i = 0; i < 5; i++) {
+            await createDingSound();
+            if (i < 4) { // Don't wait after the last ding
+                await new Promise(resolve => setTimeout(resolve, 2000));
+            }
+        }
+        
+        isPlayingAlert = false;
+    }
+
+    // --- Latency Chart Setup ---
+    const latencyChartCtx = document.getElementById('latencyChart').getContext('2d');
+    function getRegionData() {
+        const rows = Array.from(document.querySelectorAll('tbody tr'));
+        const regions = [];
+        for (const row of rows) {
+            const latencyCell = row.querySelector('.latency');
+            if (latencyCell) {
+                const regionName = row.querySelector('td').innerText.trim();
+                const pingUrl = latencyCell.getAttribute('pingUrl');
+                const supportsCors = latencyCell.getAttribute('supportsCors') !== 'false';
+                regions.push({
+                    name: regionName,
+                    pingUrl,
+                    supportsCors,
+                    cell: latencyCell
+                });
+            }
+        }
+        return regions;
+    }
+    const regionData = getRegionData();
+    const regionNames = regionData.map(r => r.name);
+    let latencyHistory = regionData.map(() => []);
+    let timestampHistory = []; // Store timestamps for tooltips
+    const maxHistory = 30;
+    const latencyChart = new Chart(latencyChartCtx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: regionData.map((r, i) => ({
+                label: r.name,
+                data: [],
+                borderColor: `hsl(${(i * 360 / regionData.length)}, 70%, 55%)`,
+                backgroundColor: 'rgba(0,0,0,0)',
+                tension: 0.3,
+                pointRadius: 2,
+                borderWidth: 1.5,
+                spanGaps: true,
+                pointBackgroundColor: `hsl(${(i * 360 / regionData.length)}, 70%, 55%)`,
+                pointBorderColor: '#fff',
+                pointHoverRadius: 4
+            }))
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
+            layout: {
+                padding: { left: 10, right: 10, top: 10, bottom: 20 }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        color: getComputedStyle(document.body).color,
+                        font: { size: 13, family: 'Inter, Segoe UI, Arial, sans-serif' },
+                        boxWidth: 14,
+                        boxHeight: 14,
+                        padding: 18
+                    }
+                },
+                tooltip: {
+                    backgroundColor: '#222',
+                    borderColor: '#888',
+                    borderWidth: 1,
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    callbacks: {
+                        title: function(context) {
+                            const dataIndex = context[0].dataIndex;
+                            if (timestampHistory[dataIndex]) {
+                                return timestampHistory[dataIndex].toLocaleString([], {
+                                    month: '2-digit',
+                                    day: '2-digit',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    second: '2-digit'
+                                });
+                            }
+                            return context[0].label;
+                        },
+                        label: function(context) {
+                            const latency = context.parsed.y;
+                            if (latency === null) {
+                                return `${context.dataset.label}: timeout`;
+                            }
+                            return `${context.dataset.label}: ${latency} ms`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: getComputedStyle(document.body).color,
+                        font: { size: 11 },
+                        maxRotation: 90,
+                        minRotation: 90,
+                        align: 'center',
+                        padding: 8
+                    },
+                    grid: {
+                        color: 'rgba(120,120,120,0.07)',
+                        lineWidth: 1
+                    },
+                    border: {
+                        color: 'rgba(120,120,120,0.15)'
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'ms',
+                        color: getComputedStyle(document.body).color,
+                        font: { size: 13 }
+                    },
+                    ticks: {
+                        color: getComputedStyle(document.body).color,
+                        font: { size: 11 },
+                        padding: 6
+                    },
+                    grid: {
+                        color: 'rgba(120,120,120,0.07)',
+                        lineWidth: 1
+                    },
+                    border: {
+                        color: 'rgba(120,120,120,0.15)'
+                    }
+                }
+            }
+        }
+    });
+    function updateChartColors() {
+        const color = getComputedStyle(document.body).color;
+        latencyChart.options.plugins.legend.labels.color = color;
+        latencyChart.options.scales.x.ticks.color = color;
+        latencyChart.options.scales.y.ticks.color = color;
+        latencyChart.options.scales.x.grid.color = 'rgba(120,120,120,0.15)';
+        latencyChart.options.scales.y.grid.color = 'rgba(120,120,120,0.15)';
+        latencyChart.options.scales.y.title.color = color;
+        latencyChart.update('none');
+    }
+    darkToggle.addEventListener('click', updateChartColors);
+    async function pingAllRegionsAndUpdateChart() {
+        const now = new Date();
+        const label = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        let newLatencies = [];
+        for (let i = 0; i < regionData.length; ++i) {
+            const r = regionData[i];
+            let elapsed = null;
+            let timedOut = false;
+            try {
+                const abortController = new AbortController();
+                const timeoutId = setTimeout(() => {
+                    timedOut = true;
+                    abortController.abort();
+                }, 5000);
+                await fetchUrl(r.pingUrl, r.supportsCors, abortController);
+                const startTime = currentTimeMillis();
+                await fetchUrl(r.pingUrl, r.supportsCors, abortController);
+                const endTime = currentTimeMillis();
+                elapsed = endTime - startTime;
+                clearTimeout(timeoutId);
+            } catch (e) {
+                elapsed = null;
+            }
+            newLatencies.push(elapsed);
+        }
+        // Check if any latency is below 100ms and trigger sound alert + log events
+        for (let i = 0; i < regionData.length; ++i) {
+            const latency = newLatencies[i];
+            if (latency !== null && latency < 100) {
+                addLowLatencyEvent(regionData[i].name, latency);
+            }
+        }
+        
+        const hasLowLatency = newLatencies.some(latency => latency !== null && latency < 100);
+        if (hasLowLatency) {
+            playLowLatencyAlert();
+        }
+        
+        // Store timestamp for tooltip
+        if (timestampHistory.length >= maxHistory) timestampHistory.shift();
+        timestampHistory.push(now);
+        
+        for (let i = 0; i < regionData.length; ++i) {
+            if (latencyHistory[i].length >= maxHistory) latencyHistory[i].shift();
+            latencyHistory[i].push(newLatencies[i]);
+        }
+        if (latencyChart.data.labels.length >= maxHistory) latencyChart.data.labels.shift();
+        latencyChart.data.labels.push(label);
+        for (let i = 0; i < regionData.length; ++i) {
+            latencyChart.data.datasets[i].data = latencyHistory[i].map(v => v === null ? null : v);
+        }
+        latencyChart.update();
+    }
+    (function initChartHistory() {
+        for (let i = 0; i < maxHistory; ++i) {
+            latencyChart.data.labels.push('');
+            for (let j = 0; j < regionData.length; ++j) {
+                latencyChart.data.datasets[j].data.push(null);
+            }
+        }
+        latencyChart.update('none');
+    })();
+    async function periodicPingLoop() {
+        await pingAllRegionsAndUpdateChart();
+        setTimeout(periodicPingLoop, 60000);
+    }
+    periodicPingLoop();
+    pingButton.addEventListener('click', async function () {
+        await pingAllRegionsAndUpdateChart();
+    });
+</script>
+</body>
+</html>
