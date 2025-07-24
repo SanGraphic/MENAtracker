@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang='en'>
-<head>
+<!-- saved from url=(0066)file:///C:/Users/sanay/Desktop/project/quicknote/nmew/mideast.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>MENA latency tracker</title>
-    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1'/>
-    <meta name='description' content='A website for measuring network latency from your browser to various cloud provider datacenters in the Middle East and North Africa (MENA) region.'>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A website for measuring network latency from your browser to various cloud provider datacenters in the Middle East and North Africa (MENA) region.">
     <style>
         :root {
             --background: #000000;
@@ -197,8 +197,8 @@
         }
     </style>
     <!-- Chart.js CDN for graph rendering -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script defer data-domain="cloudping.info" src="https://plausible.io/js/script.js"></script>
+    <script src="./MENA latency tracker_files/chart.js.download"></script>
+    <script defer="" data-domain="cloudping.info" src="./MENA latency tracker_files/script.js.download"></script>
     <script>window.plausible = window.plausible || function () {
         (window.plausible.q = window.plausible.q || []).push(arguments)
     }</script>
@@ -211,14 +211,14 @@
         <button class="dark-toggle" id="darkToggle" aria-label="Toggle dark mode">🌙 Dark Mode</button>
     </div>
 </header>
-<hr/>
+<hr>
 <div style="max-width: 100%; margin: 0 auto 2rem auto;">
-  <canvas id="latencyChart" style="width:100%;max-width:900px;height:260px;"></canvas>
+  <canvas id="latencyChart" style="width: 768px; max-width: 900px; height: 260px; display: block; box-sizing: border-box;" width="960" height="325"></canvas>
 </div>
 <main>
     <p>Click the "HTTP Ping" button to measure latency from your browser to various cloud provider datacenters in the Middle East and North Africa (MENA) region.</p>
     <p>
-        <button id='pingButton'>HTTP Ping</button>
+        <button id="pingButton">HTTP Ping</button>
     </p>
     <table>
         <thead>
@@ -230,47 +230,47 @@
         <!-- AWS Middle East Regions -->
         <tbody>
         <tr>
-            <td class='service-name' colspan="2"><a href='https://aws.amazon.com/'>Amazon Web Services</a>&trade;</td>
+            <td class="service-name" colspan="2"><a href="https://aws.amazon.com/">Amazon Web Services</a>™</td>
         </tr>
         <tr>
             <td>il-central-1 (Israel)</td>
-            <td class='latency' pingUrl='https://dynamodb.il-central-1.amazonaws.com/ping'>&nbsp;</td>
+            <td class="latency" pingurl="https://dynamodb.il-central-1.amazonaws.com/ping"><span style="color:var(--error)">122 ms</span></td>
         </tr>
         <tr>
             <td>me-south-1 (Bahrain)</td>
-            <td class='latency' pingUrl='https://dynamodb.me-south-1.amazonaws.com/ping'>&nbsp;</td>
+            <td class="latency" pingurl="https://dynamodb.me-south-1.amazonaws.com/ping"><span style="color:var(--error)">162 ms</span></td>
         </tr>
         <tr>
             <td>me-central-1 (UAE)</td>
-            <td class='latency' pingUrl='https://streams.dynamodb.me-central-1.amazonaws.com/ping'>&nbsp;</td>
+            <td class="latency" pingurl="https://streams.dynamodb.me-central-1.amazonaws.com/ping"><span style="color:var(--error)">173 ms</span></td>
         </tr>
         </tbody>
         <!-- Google Cloud Middle East Regions -->
         <tbody>
         <tr>
-            <td class='service-name' colspan="2"><a href='https://cloud.google.com/'>Google Cloud Platform</a></td>
+            <td class="service-name" colspan="2"><a href="https://cloud.google.com/">Google Cloud Platform</a></td>
         </tr>
         <tr>
             <td>me-central1 (Qatar)</td>
-            <td class='latency' pingUrl='https://me-central1-5tkroniexa-ww.a.run.app/ping'>&nbsp;</td>
+            <td class="latency" pingurl="https://me-central1-5tkroniexa-ww.a.run.app/ping"><span style="color:var(--error)">153 ms</span></td>
         </tr>
         <tr>
             <td>me-central2 (Saudi Arabia)</td>
-            <td class='latency' pingUrl='https://me-central2-5tkroniexa-wx.a.run.app/ping'>&nbsp;</td>
+            <td class="latency" pingurl="https://me-central2-5tkroniexa-wx.a.run.app/ping"><span style="color:var(--error)">148 ms</span></td>
         </tr>
         <tr>
             <td>me-west1 (Israel)</td>
-            <td class='latency' pingUrl='https://me-west1-5tkroniexa-zf.a.run.app/ping'>&nbsp;</td>
+            <td class="latency" pingurl="https://me-west1-5tkroniexa-zf.a.run.app/ping"><span style="color:var(--error)">116 ms</span></td>
         </tr>
         </tbody>
         <!-- Vultr Middle East Region -->
         <tbody>
         <tr>
-            <td class='service-name' colspan="2"><a href='https://www.vultr.com/'>Vultr</a></td>
+            <td class="service-name" colspan="2"><a href="https://www.vultr.com/">Vultr</a></td>
         </tr>
         <tr>
             <td>Tel Aviv (Israel)</td>
-            <td class='latency' pingUrl='https://tlv-il-ping.vultr.com/ping' supportsCors='false'>&nbsp;</td>
+            <td class="latency" pingurl="https://tlv-il-ping.vultr.com/ping" supportscors="false"><span style="color:var(--error)">119 ms</span></td>
         </tr>
         </tbody>
     </table>
@@ -295,11 +295,11 @@
     </div>
 </main>
 <footer class="footer">
-    <hr/>
+    <hr>
     <p>MENA latency tracker, by SanGraphic based on Cloudping.info</p>
-    <p style="font-size:0.95em;color:var(--accent);">Copyright &copy; 2010-2024 Michael Leonhard. Amazon Web Services and AWS are trademarks of Amazon.com, Inc. or its affiliates in the United States and/or other countries.</p>
+    <p style="font-size:0.95em;color:var(--accent);">Copyright © 2010-2024 Michael Leonhard. Amazon Web Services and AWS are trademarks of Amazon.com, Inc. or its affiliates in the United States and/or other countries.</p>
 </footer>
-<script type='text/javascript'>
+<script type="text/javascript">
     // Notification toggle
     let soundNotificationsEnabled = true;
     const notificationToggle = document.getElementById('notificationToggle');
@@ -739,6 +739,24 @@
             playLowLatencyAlert();
         }
         
+        // Update table cells with new latencies
+        for (let i = 0; i < regionData.length; ++i) {
+            const cell = regionData[i].cell;
+            const latency = newLatencies[i];
+            let color = 'var(--success)';
+            if (latency === null) {
+                cell.innerHTML = `<span style="color:var(--error)">timeout</span>`;
+            } else {
+                if (latency < 60) {
+                    color = 'var(--success)';
+                } else if (latency < 100) {
+                    color = '#facc15'; // yellow-400
+                } else {
+                    color = 'var(--error)';
+                }
+                cell.innerHTML = `<span style="color:${color}">${latency} ms</span>`;
+            }
+        }
         // Store timestamp for tooltip
         if (timestampHistory.length >= maxHistory) timestampHistory.shift();
         timestampHistory.push(now);
@@ -772,5 +790,6 @@
         await pingAllRegionsAndUpdateChart();
     });
 </script>
-</body>
-</html>
+
+
+</body></html>
