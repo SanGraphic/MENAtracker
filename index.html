@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!-- saved from url=(0066)file:///C:/Users/sanay/Desktop/project/quicknote/nmew/mideast.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>MENA latency tracker</title>
     
@@ -350,6 +349,157 @@
         .clickable-row:hover {
             background: var(--secondary) !important;
         }
+        
+        /* Map Styles */
+        #latencyMap {
+            width: 100%;
+            height: 400px;
+            border-radius: 0.7rem;
+            border: 1px solid var(--border);
+            margin: 2rem 0;
+            box-shadow: 0 2px 16px 0 rgba(0,0,0,0.08);
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Leaflet map container styles */
+        .leaflet-container {
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+        }
+        
+        .leaflet-popup-content {
+            margin: 8px 12px;
+            line-height: 1.4;
+        }
+        
+        .leaflet-popup-content-wrapper {
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            background: var(--background);
+            color: var(--foreground);
+            border: 1px solid var(--border);
+        }
+        
+        .leaflet-popup-tip {
+            background: var(--background);
+            border: 1px solid var(--border);
+        }
+        
+        .leaflet-control-zoom a {
+            background: var(--background);
+            color: var(--foreground);
+            border: 1px solid var(--border);
+        }
+        
+        .leaflet-control-zoom a:hover {
+            background: var(--secondary);
+        }
+        
+        .leaflet-control-attribution {
+            background: rgba(0,0,0,0.7);
+            color: #ccc;
+        }
+        
+        .map-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .map-controls button {
+            margin-bottom: 0;
+            font-size: 0.9rem;
+            padding: 0.6rem 1rem;
+        }
+        
+        .auto-refresh-off {
+            background: var(--error) !important;
+        }
+        
+        .best-server {
+            background: linear-gradient(135deg, var(--success), #16a34a) !important;
+            color: white !important;
+            font-weight: 700 !important;
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.3) !important;
+        }
+        
+        .connection-quality {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.3rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        
+        .quality-excellent {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--success);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+        
+        .quality-good {
+            background: rgba(245, 158, 66, 0.2);
+            color: #f59e42;
+            border: 1px solid rgba(245, 158, 66, 0.3);
+        }
+        
+        .quality-fair {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        .quality-poor {
+            background: rgba(107, 114, 128, 0.2);
+            color: #6b7280;
+            border: 1px solid rgba(107, 114, 128, 0.3);
+        }
+        
+        .location-status {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .location-status.success {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+        
+        .location-status.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        .location-status.loading {
+            background: rgba(245, 158, 66, 0.1);
+            color: var(--accent);
+            border: 1px solid rgba(245, 158, 66, 0.3);
+        }
+        
+        @media (max-width: 600px) {
+            #latencyMap {
+                height: 300px;
+                border-radius: 0.4rem;
+            }
+            
+            .map-controls {
+                flex-direction: column;
+            }
+            
+            .map-controls button {
+                width: 100%;
+            }
+        }
+        
         body.light {
             --background: #f7f7f9;
             --foreground: #23272a;
@@ -365,6 +515,9 @@
     </style>
     <!-- Chart.js CDN for graph rendering -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Leaflet CSS and JS for interactive maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script defer="" data-domain="cloudping.info" src="https://plausible.io/js/script.js"></script>
     <script>window.plausible = window.plausible || function () {
         (window.plausible.q = window.plausible.q || []).push(arguments)
@@ -382,10 +535,27 @@
 <div style="max-width: 100%; margin: 0 auto 2rem auto;">
   <canvas id="latencyChart" style="width: 768px; max-width: 900px; height: 260px; display: block; box-sizing: border-box;" width="960" height="325"></canvas>
 </div>
+
+<!-- Interactive Latency Map -->
+<div id="locationStatus" class="location-status loading">
+    <span>📍</span>
+    <span>Requesting location permission...</span>
+</div>
+
+<div class="map-controls">
+    <button id="getLocationBtn" style="background: var(--primary);">📍 Get My Location</button>
+    <button id="centerMapBtn" style="background: var(--accent);">🎯 Center Map</button>
+    <button id="toggleLinesBtn" style="background: var(--secondary); color: var(--foreground); border: 1px solid var(--border);">🔗 Toggle Lines</button>
+    <button id="autoRefreshToggle" style="background: var(--success);">🔄 Auto-refresh On</button>
+</div>
+
+<div id="latencyMap"></div>
+
 <main>
     <p>Click the "HTTP Ping" button to measure latency from your browser to various cloud provider datacenters in the Middle East and North Africa (MENA) region.</p>
     <p>
         <button id="pingButton">HTTP Ping</button>
+        <button id="exportDataBtn" style="background: var(--accent); margin-left: 0.5rem;">📊 Export Data</button>
     </p>
     <table>
         <thead>
@@ -399,15 +569,15 @@
         <tr>
             <td class="service-name" colspan="2"><a href="https://aws.amazon.com/">Amazon Web Services</a>™</td>
         </tr>
-        <tr>
+        <tr data-region="il-central-1 (Israel)">
             <td>il-central-1 (Israel)</td>
             <td class="latency" pingurl="https://dynamodb.il-central-1.amazonaws.com/ping"><span style="color:var(--error)">122 ms</span></td>
         </tr>
-        <tr>
+        <tr data-region="me-south-1 (Bahrain)">
             <td>me-south-1 (Bahrain)</td>
             <td class="latency" pingurl="https://dynamodb.me-south-1.amazonaws.com/ping"><span style="color:var(--error)">162 ms</span></td>
         </tr>
-        <tr>
+        <tr data-region="me-central-1 (UAE)">
             <td>me-central-1 (UAE)</td>
             <td class="latency" pingurl="https://streams.dynamodb.me-central-1.amazonaws.com/ping"><span style="color:var(--error)">173 ms</span></td>
         </tr>
@@ -417,15 +587,15 @@
         <tr>
             <td class="service-name" colspan="2"><a href="https://cloud.google.com/">Google Cloud Platform</a></td>
         </tr>
-        <tr>
+        <tr data-region="me-central1 (Qatar)">
             <td>me-central1 (Qatar)</td>
             <td class="latency" pingurl="https://me-central1-5tkroniexa-ww.a.run.app/ping"><span style="color:var(--error)">153 ms</span></td>
         </tr>
-        <tr>
+        <tr data-region="me-central2 (Saudi Arabia)">
             <td>me-central2 (Saudi Arabia)</td>
             <td class="latency" pingurl="https://me-central2-5tkroniexa-wx.a.run.app/ping"><span style="color:var(--error)">148 ms</span></td>
         </tr>
-        <tr>
+        <tr data-region="me-west1 (Israel)">
             <td>me-west1 (Israel)</td>
             <td class="latency" pingurl="https://me-west1-5tkroniexa-zf.a.run.app/ping"><span style="color:var(--error)">116 ms</span></td>
         </tr>
@@ -435,7 +605,7 @@
         <tr>
             <td class="service-name" colspan="2"><a href="https://www.vultr.com/">Vultr</a></td>
         </tr>
-        <tr>
+        <tr data-region="Tel Aviv (Israel)">
             <td>Tel Aviv (Israel)</td>
             <td class="latency" pingurl="https://tlv-il-ping.vultr.com/ping" supportscors="false"><span style="color:var(--error)">119 ms</span></td>
         </tr>
@@ -506,6 +676,404 @@
     <p style="font-size:0.95em;color:var(--accent);">Copyright © 2010-2024 Michael Leonhard. Amazon Web Services and AWS are trademarks of Amazon.com, Inc. or its affiliates in the United States and/or other countries.</p>
 </footer>
 <script type="text/javascript">
+    // Server locations data with coordinates
+    const serverLocations = {
+        'il-central-1 (Israel)': { lat: 31.7683, lng: 35.2137, provider: 'AWS' },
+        'me-south-1 (Bahrain)': { lat: 26.0667, lng: 50.5577, provider: 'AWS' },
+        'me-central-1 (UAE)': { lat: 25.2048, lng: 55.2708, provider: 'AWS' },
+        'me-central1 (Qatar)': { lat: 25.2854, lng: 51.5310, provider: 'Google Cloud' },
+        'me-central2 (Saudi Arabia)': { lat: 24.7136, lng: 46.6753, provider: 'Google Cloud' },
+        'me-west1 (Israel)': { lat: 31.9683, lng: 35.0137, provider: 'Google Cloud' },
+        'Tel Aviv (Israel)': { lat: 32.0853, lng: 34.7818, provider: 'Vultr' }
+    };
+    
+    // Store latest latency data for each region
+    let latestLatencyData = {};
+    
+    // Auto-refresh and best server tracking
+    let autoRefreshEnabled = true;
+    let bestServer = null;
+    let bestLatency = Infinity;
+
+    // Map variables
+    let map;
+    let userMarker;
+    let serverMarkers = {};
+    let connectionLines = {};
+    let userLocation = null;
+    let linesVisible = true;
+
+    // Initialize map
+    function initMap() {
+        // Ensure map container exists
+        const mapContainer = document.getElementById('latencyMap');
+        if (!mapContainer) {
+            console.error('Map container not found');
+            return;
+        }
+        
+        // Create map centered on MENA region
+        map = L.map('latencyMap').setView([25.0, 45.0], 5);
+        
+        // Add tile layer based on current theme
+        const isDarkMode = !document.body.classList.contains('light');
+        const tileLayer = isDarkMode 
+            ? L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '',
+                subdomains: 'abcd',
+                maxZoom: 18
+            })
+            : L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '',
+                maxZoom: 18
+            });
+        
+        tileLayer.addTo(map);
+        map._tileLayer = tileLayer;
+        
+        // Add server markers with latency labels
+        Object.keys(serverLocations).forEach(region => {
+            const location = serverLocations[region];
+            
+            // Create server marker
+            const marker = L.marker([location.lat, location.lng], {
+                icon: L.divIcon({
+                    className: 'server-marker',
+                    html: `<div style="background: var(--primary); color: white; border-radius: 50%; width: 12px; height: 12px; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: bold;">S</div>`,
+                    iconSize: [12, 12],
+                    iconAnchor: [6, 6]
+                })
+            }).addTo(map);
+            
+            // Create latency label positioned above the server marker
+            const latencyLabel = L.divIcon({
+                className: 'latency-label',
+                html: `<div style="background: rgba(0,0,0,0.9); color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; white-space: nowrap; border: 1px solid rgba(255,255,255,0.2);" id="label-${region.replace(/[^a-zA-Z0-9]/g, '-')}">-- ms</div>`,
+                iconSize: [60, 25],
+                iconAnchor: [30, 25] // Position above the marker
+            });
+            
+            const labelMarker = L.marker([location.lat + 0.02, location.lng], { 
+                icon: latencyLabel,
+                interactive: false // Make label non-interactive
+            }).addTo(map);
+            
+            marker.bindPopup(`
+                <div style="font-family: 'Inter', sans-serif;">
+                    <strong>${region}</strong><br>
+                    <small>${location.provider}</small><br>
+                    <span id="latency-${region.replace(/[^a-zA-Z0-9]/g, '-')}">Latency: --</span><br>
+                    <span id="timestamp-${region.replace(/[^a-zA-Z0-9]/g, '-')}" style="font-size: 0.8em; color: #888;">Last test: Never</span>
+                </div>
+            `);
+            
+            // Update popup content when opened
+            marker.on('popupopen', function() {
+                updateMapLatency(region, latestLatencyData[region]?.latency || null);
+            });
+            
+            serverMarkers[region] = { marker, label: labelMarker };
+        });
+    }
+
+    // Get user location
+    function getUserLocation() {
+        const statusDiv = document.getElementById('locationStatus');
+        
+        if (!navigator.geolocation) {
+            statusDiv.className = 'location-status error';
+            statusDiv.innerHTML = '<span>❌</span><span>Geolocation not supported by this browser</span>';
+            return;
+        }
+        
+        statusDiv.className = 'location-status loading';
+        statusDiv.innerHTML = '<span>📍</span><span>Getting your location...</span>';
+        
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                userLocation = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+                
+                // Add user marker
+                if (userMarker) {
+                    map.removeLayer(userMarker);
+                }
+                
+                userMarker = L.marker([userLocation.lat, userLocation.lng], {
+                    icon: L.divIcon({
+                        className: 'user-marker',
+                        html: `<div style="background: var(--success); color: white; border-radius: 50%; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold;">U</div>`,
+                        iconSize: [16, 16],
+                        iconAnchor: [8, 8]
+                    })
+                }).addTo(map);
+                
+                userMarker.bindPopup(`
+                    <div style="font-family: 'Inter', sans-serif;">
+                        <strong>Your Location</strong><br>
+                        <small>Lat: ${userLocation.lat.toFixed(4)}</small><br>
+                        <small>Lng: ${userLocation.lng.toFixed(4)}</small>
+                    </div>
+                `);
+                
+                // Center map on user location
+                map.setView([userLocation.lat, userLocation.lng], 6);
+                
+                // Draw connection lines
+                drawConnectionLines();
+                
+                statusDiv.className = 'location-status success';
+                statusDiv.innerHTML = '<span>✅</span><span>Location obtained successfully</span>';
+            },
+            function(error) {
+                let errorMessage = 'Unknown error occurred';
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        errorMessage = 'Location permission denied';
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        errorMessage = 'Location information unavailable';
+                        break;
+                    case error.TIMEOUT:
+                        errorMessage = 'Location request timed out';
+                        break;
+                }
+                
+                statusDiv.className = 'location-status error';
+                statusDiv.innerHTML = `<span>❌</span><span>${errorMessage}</span>`;
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 60000
+            }
+        );
+    }
+
+    // Draw connection lines from user to servers
+    function drawConnectionLines() {
+        if (!userLocation || !linesVisible) return;
+        
+        // Clear existing lines
+        Object.values(connectionLines).forEach(line => {
+            if (line) map.removeLayer(line);
+        });
+        connectionLines = {};
+        
+        Object.keys(serverLocations).forEach(region => {
+            const location = serverLocations[region];
+            const line = L.polyline([
+                [userLocation.lat, userLocation.lng],
+                [location.lat, location.lng]
+            ], {
+                color: 'var(--primary)',
+                weight: 2,
+                opacity: 0.7,
+                dashArray: '5, 5'
+            }).addTo(map);
+            
+            connectionLines[region] = { line };
+        });
+    }
+
+    // Update latency on map
+    function updateMapLatency(region, latency) {
+        // Update popup latency
+        const popupId = `latency-${region.replace(/[^a-zA-Z0-9]/g, '-')}`;
+        const popupElement = document.getElementById(popupId);
+        if (popupElement) {
+            popupElement.textContent = `Latency: ${latency} ms`;
+        }
+        
+        // Update popup timestamp
+        const timestampId = `timestamp-${region.replace(/[^a-zA-Z0-9]/g, '-')}`;
+        const timestampElement = document.getElementById(timestampId);
+        if (timestampElement && latestLatencyData[region]) {
+            const timestamp = latestLatencyData[region].timestamp;
+            const timeString = timestamp.toLocaleString([], {
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            timestampElement.textContent = `Last test: ${timeString}`;
+        }
+        
+        // Update server location label
+        const labelId = `label-${region.replace(/[^a-zA-Z0-9]/g, '-')}`;
+        const labelElement = document.getElementById(labelId);
+        if (labelElement) {
+            labelElement.textContent = `${latency} ms`;
+            
+            // Color code based on latency
+            if (latency < 60) {
+                labelElement.style.background = 'rgba(34, 197, 94, 0.95)';
+                labelElement.style.borderColor = 'rgba(34, 197, 94, 0.5)';
+            } else if (latency < 100) {
+                labelElement.style.background = 'rgba(245, 158, 66, 0.95)';
+                labelElement.style.borderColor = 'rgba(245, 158, 66, 0.5)';
+            } else {
+                labelElement.style.background = 'rgba(239, 68, 68, 0.95)';
+                labelElement.style.borderColor = 'rgba(239, 68, 68, 0.5)';
+            }
+        }
+    }
+
+    // Toggle connection lines
+    function toggleLines() {
+        linesVisible = !linesVisible;
+        const toggleBtn = document.getElementById('toggleLinesBtn');
+        
+        if (linesVisible) {
+            toggleBtn.innerHTML = '🔗 Toggle Lines';
+            drawConnectionLines();
+        } else {
+            toggleBtn.innerHTML = '🔗 Show Lines';
+            Object.values(connectionLines).forEach(connection => {
+                if (connection.line) map.removeLayer(connection.line);
+            });
+            connectionLines = {};
+        }
+    }
+
+    // Center map on user location
+    function centerMap() {
+        if (userLocation) {
+            map.setView([userLocation.lat, userLocation.lng], 6);
+        } else {
+            map.setView([25.0, 45.0], 5);
+        }
+    }
+    
+    // Toggle auto-refresh
+    function toggleAutoRefresh() {
+        autoRefreshEnabled = !autoRefreshEnabled;
+        const toggleBtn = document.getElementById('autoRefreshToggle');
+        
+        if (autoRefreshEnabled) {
+            toggleBtn.innerHTML = '🔄 Auto-refresh On';
+            toggleBtn.classList.remove('auto-refresh-off');
+            // Restart periodic ping if it was stopped
+            if (!window.periodicPingInterval) {
+                periodicPingLoop();
+            }
+        } else {
+            toggleBtn.innerHTML = '⏸️ Auto-refresh Off';
+            toggleBtn.classList.add('auto-refresh-off');
+            // Stop periodic ping
+            if (window.periodicPingInterval) {
+                clearTimeout(window.periodicPingInterval);
+                window.periodicPingInterval = null;
+            }
+        }
+        
+        localStorage.setItem('autoRefreshEnabled', autoRefreshEnabled);
+    }
+    
+    // Get connection quality rating
+    function getConnectionQuality(latency) {
+        if (latency === null) return 'poor';
+        if (latency < 60) return 'excellent';
+        if (latency < 100) return 'good';
+        if (latency < 150) return 'fair';
+        return 'poor';
+    }
+    
+    // Update best server highlighting
+    function updateBestServer(newLatencies) {
+        // Clear previous best server highlighting
+        if (bestServer) {
+            const prevRow = document.querySelector(`tr[data-region="${bestServer}"]`);
+            if (prevRow) {
+                prevRow.classList.remove('best-server');
+            }
+        }
+        
+        // Find new best server
+        let newBestServer = null;
+        let newBestLatency = Infinity;
+        
+        for (let i = 0; i < regionData.length; ++i) {
+            const latency = newLatencies[i];
+            if (latency !== null && latency < newBestLatency) {
+                newBestLatency = latency;
+                newBestServer = regionData[i].name;
+            }
+        }
+        
+        // Update best server
+        bestServer = newBestServer;
+        bestLatency = newBestLatency;
+        
+        // Highlight new best server
+        if (bestServer) {
+            const bestRow = document.querySelector(`tr[data-region="${bestServer}"]`);
+            if (bestRow) {
+                bestRow.classList.add('best-server');
+            }
+        }
+    }
+    
+    // Export data to CSV
+    function exportDataToCSV() {
+        const now = new Date();
+        const timestamp = now.toISOString().replace(/[:.]/g, '-');
+        
+        // Create CSV content
+        let csvContent = 'Region,Provider,Latency (ms),Quality,Timestamp\n';
+        
+        Object.keys(latestLatencyData).forEach(region => {
+            const data = latestLatencyData[region];
+            const provider = serverLocations[region]?.provider || 'Unknown';
+            const latency = data.latency !== null ? data.latency : 'timeout';
+            const quality = getConnectionQuality(data.latency);
+            const timestamp = data.timestamp.toISOString();
+            
+            csvContent += `"${region}","${provider}","${latency}","${quality}","${timestamp}"\n`;
+        });
+        
+        // Create and download file
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `mena-latency-${timestamp}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // Initialize map when page loads
+    function initializeMapAndControls() {
+        // Small delay to ensure DOM is ready
+        setTimeout(() => {
+            initMap();
+            
+                    // Add event listeners
+        document.getElementById('getLocationBtn').addEventListener('click', getUserLocation);
+        document.getElementById('centerMapBtn').addEventListener('click', centerMap);
+        document.getElementById('toggleLinesBtn').addEventListener('click', toggleLines);
+        document.getElementById('autoRefreshToggle').addEventListener('click', toggleAutoRefresh);
+        document.getElementById('exportDataBtn').addEventListener('click', exportDataToCSV);
+            
+                    // Try to get location automatically
+        getUserLocation();
+        
+        // Initialize auto-refresh setting from localStorage
+        const savedAutoRefresh = localStorage.getItem('autoRefreshEnabled');
+        if (savedAutoRefresh === 'false') {
+            autoRefreshEnabled = false;
+            const toggleBtn = document.getElementById('autoRefreshToggle');
+            toggleBtn.innerHTML = '⏸️ Auto-refresh Off';
+            toggleBtn.classList.add('auto-refresh-off');
+        }
+        }, 100);
+    }
+
     // Notification toggle
     let soundNotificationsEnabled = true;
     const notificationToggle = document.getElementById('notificationToggle');
@@ -539,9 +1107,26 @@
         if (isDark) {
             document.body.classList.remove('light');
             darkToggle.innerHTML = '🌙 Dark Mode';
+            // Update map to dark theme
+            if (map) {
+                map.removeLayer(map._tileLayer);
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '',
+                    subdomains: 'abcd',
+                    maxZoom: 18
+                }).addTo(map);
+            }
         } else {
             document.body.classList.add('light');
             darkToggle.innerHTML = '☀️ Light Mode';
+            // Update map to light theme
+            if (map) {
+                map.removeLayer(map._tileLayer);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '',
+                    maxZoom: 18
+                }).addTo(map);
+            }
         }
         localStorage.setItem('darkMode', isDark ? 'dark' : 'light');
     }
@@ -610,9 +1195,14 @@
             box.innerHTML = `<span style="color:${color}">${elapsed} ms</span>`;
             clearTimeout(timeoutId);
             
+            // Update map with latency
+            const regionName = box.closest('tr').querySelector('td').innerText.trim();
+            if (serverLocations[regionName]) {
+                updateMapLatency(regionName, elapsed);
+            }
+            
             // Trigger sound alert and log event if latency is below 100ms
             if (elapsed < 100) {
-                const regionName = box.closest('tr').querySelector('td').innerText.trim();
                 addLowLatencyEvent(regionName, elapsed);
                 playLowLatencyAlert();
                 showLowLatencyPopup(regionName, elapsed);
@@ -637,15 +1227,10 @@
     const pingButton = document.getElementById('pingButton');
     pingButton.addEventListener('click', async function () {
         pingButton.setAttribute('disabled', 'disabled');
-        let latencyBoxes = Array.from(document.querySelectorAll('.latency'));
-        latencyBoxes.reverse();
-        await Promise.all([
-            worker(latencyBoxes),
-            worker(latencyBoxes),
-            worker(latencyBoxes),
-            worker(latencyBoxes),
-            worker(latencyBoxes)
-        ]);
+        
+        // Use unified ping function to ensure all components stay in sync
+        await unifiedPingAllRegions();
+        
         pingButton.removeAttribute('disabled');
     });
 
@@ -715,6 +1300,9 @@
     
     // Clear button event listener
     document.addEventListener('DOMContentLoaded', function() {
+        // Initialize map and controls
+        initializeMapAndControls();
+        
         const clearButton = document.getElementById('clearLowLatencyButton');
         if (clearButton) {
             clearButton.addEventListener('click', clearLowLatencyEvents);
@@ -724,13 +1312,14 @@
         const testPopupButton = document.getElementById('testPopupButton');
         if (testPopupButton) {
             testPopupButton.addEventListener('click', function() {
-                // Simulate a low latency detection with test data
-                const testRegion = 'Test Region (Demo)';
+                // Simulate a low latency detection with test data using real server names
+                const serverNames = Object.keys(serverLocations);
+                const randomServer = serverNames[Math.floor(Math.random() * serverNames.length)];
                 const testLatency = Math.floor(Math.random() * 40) + 30; // Random latency between 30-69ms
                 
-                addLowLatencyEvent(testRegion, testLatency);
+                addLowLatencyEvent(randomServer, testLatency);
                 playLowLatencyAlert();
-                showLowLatencyPopup(testRegion, testLatency);
+                showLowLatencyPopup(randomServer, testLatency);
             });
         }
     });
@@ -1183,53 +1772,71 @@
         latencyChart.update('none');
     }
     darkToggle.addEventListener('click', updateChartColors);
-    async function pingAllRegionsAndUpdateChart() {
+    // Unified ping function that updates table, chart, and map simultaneously
+    async function unifiedPingAllRegions() {
         const now = new Date();
         const label = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         let newLatencies = [];
+        let lowLatencyEvents = [];
+        
+        // Ping all regions and collect results
         for (let i = 0; i < regionData.length; ++i) {
             const r = regionData[i];
             let elapsed = null;
             let timedOut = false;
+            
             try {
                 const abortController = new AbortController();
                 const timeoutId = setTimeout(() => {
                     timedOut = true;
                     abortController.abort();
                 }, 5000);
+                
                 await fetchUrl(r.pingUrl, r.supportsCors, abortController);
                 const startTime = currentTimeMillis();
                 await fetchUrl(r.pingUrl, r.supportsCors, abortController);
                 const endTime = currentTimeMillis();
                 elapsed = endTime - startTime;
                 clearTimeout(timeoutId);
+                
+                // Check for low latency events
+                if (elapsed !== null && elapsed < 100) {
+                    lowLatencyEvents.push({ region: r.name, latency: elapsed });
+                }
+                
             } catch (e) {
                 elapsed = null;
             }
+            
             newLatencies.push(elapsed);
         }
-        // Check if any latency is below 100ms and trigger sound alert + log events + popup
-        for (let i = 0; i < regionData.length; ++i) {
-            const latency = newLatencies[i];
-            if (latency !== null && latency < 100) {
-                addLowLatencyEvent(regionData[i].name, latency);
-                showLowLatencyPopup(regionData[i].name, latency);
-            }
-        }
         
-        const hasLowLatency = newLatencies.some(latency => latency !== null && latency < 100);
-        if (hasLowLatency) {
-            playLowLatencyAlert();
-        }
+        // Update best server highlighting
+        updateBestServer(newLatencies);
         
-        // Update table cells with new latencies
+        // Update all visual components with the same data
         for (let i = 0; i < regionData.length; ++i) {
             const cell = regionData[i].cell;
             const latency = newLatencies[i];
+            const regionName = regionData[i].name;
+            
+            // Store latest latency data
+            latestLatencyData[regionName] = {
+                latency: latency,
+                timestamp: now,
+                status: latency === null ? 'timeout' : 'success'
+            };
+            
+            // Determine color based on latency
             let color = 'var(--success)';
+            let displayText = '';
+            let quality = getConnectionQuality(latency);
+            
             if (latency === null) {
-                cell.innerHTML = `<span style="color:var(--error)">timeout</span>`;
+                displayText = 'timeout';
+                color = 'var(--error)';
             } else {
+                displayText = `${latency} ms`;
                 if (latency < 60) {
                     color = 'var(--success)';
                 } else if (latency < 100) {
@@ -1237,12 +1844,33 @@
                 } else {
                     color = 'var(--error)';
                 }
-                cell.innerHTML = `<span style="color:${color}">${latency} ms</span>`;
+            }
+            
+            // Update table cell with quality indicator
+            cell.innerHTML = `
+                <span style="color:${color}">${displayText}</span>
+                <span class="connection-quality quality-${quality}">${quality}</span>
+            `;
+            
+            // Update map (only if latency is not null)
+            if (latency !== null && serverLocations[regionName]) {
+                updateMapLatency(regionName, latency);
             }
         }
-        // Store timestamp for tooltip (unlimited)
-        timestampHistory.push(now);
         
+        // Handle low latency events
+        lowLatencyEvents.forEach(event => {
+            addLowLatencyEvent(event.region, event.latency);
+            showLowLatencyPopup(event.region, event.latency);
+        });
+        
+        // Play sound alert if any low latency events
+        if (lowLatencyEvents.length > 0) {
+            playLowLatencyAlert();
+        }
+        
+        // Update chart
+        timestampHistory.push(now);
         for (let i = 0; i < regionData.length; ++i) {
             latencyHistory[i].push(newLatencies[i]);
         }
@@ -1252,14 +1880,19 @@
         }
         latencyChart.update();
     }
+    
+    // Legacy function for backward compatibility
+    async function pingAllRegionsAndUpdateChart() {
+        await unifiedPingAllRegions();
+    }
     async function periodicPingLoop() {
-        await pingAllRegionsAndUpdateChart();
-        setTimeout(periodicPingLoop, 60000);
+        if (autoRefreshEnabled) {
+            await unifiedPingAllRegions();
+        }
+        window.periodicPingInterval = setTimeout(periodicPingLoop, 60000);
     }
     periodicPingLoop();
-    pingButton.addEventListener('click', async function () {
-        await pingAllRegionsAndUpdateChart();
-    });
+
 </script>
 
 
