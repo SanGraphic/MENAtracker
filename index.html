@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- saved from url=(0066)file:///C:/Users/sanay/Desktop/project/quicknote/nmew/mideast.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>MENA latency tracker</title>
     
@@ -23,68 +24,157 @@
             background: var(--background);
             color: var(--foreground);
             font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-            max-width: 48rem;
-            margin: 0 auto;
-            padding: 2rem 0.5rem 0 0.5rem;
+            margin: 0;
+            padding: 0;
             line-height: 1.6;
             font-size: 1.08rem;
             transition: background 0.3s, color 0.3s;
+            height: 100vh;
+            overflow: hidden;
         }
+        
+        .main-container {
+            display: flex;
+            height: 100vh;
+            width: 100%;
+        }
+        
+        .left-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+        
+        .right-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 1rem;
+            max-width: 50%;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* Internet Explorer 10+ */
+        }
+        
+        .right-panel::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+        
+        /* Hide scrollbars for all scrollable elements */
+        * {
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* Internet Explorer 10+ */
+        }
+        
+        *::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+        
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1rem;
+            padding: 1rem;
+            background: var(--background);
+            border-bottom: 1px solid var(--border);
         }
+        
         header h1 {
             font-size: 2.1rem;
             font-weight: 700;
             letter-spacing: -1px;
             margin: 0;
         }
+        
+        .header-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .map-section {
+            flex: 1;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            min-height: 70vh;
+        }
+        
+        .chart-section {
+            background: var(--background);
+            border-radius: 0.7rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+        }
+        
+        .table-section {
+            background: var(--background);
+            border-radius: 0.7rem;
+            padding: 1rem;
+            border: 1px solid var(--border);
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
         hr {
             height: 1px;
             background: var(--border);
             border: none;
             margin: 1.5rem 0;
         }
+        
         table {
             width: 100%;
-            margin: 2rem 0 1.5rem 0;
+            margin: 0;
             border-radius: 0.7rem;
             overflow: hidden;
             border: 1px solid var(--border);
             border-collapse: separate;
             box-shadow: 0 2px 16px 0 rgba(0,0,0,0.08);
         }
+        
         thead tr {
             background: var(--table-header);
         }
+        
         thead th {
             color: var(--accent);
             font-weight: 600;
             font-size: 1.1rem;
             border-bottom: 1px solid var(--border);
         }
+        
         tbody tr {
             background: var(--table-row);
             transition: background 0.2s;
         }
+        
         tbody tr:nth-child(even) {
             background: var(--table-row-alt);
         }
+        
         tbody tr:hover {
             background: var(--secondary);
         }
+        
         th, td {
             padding: 0.7rem 0.6rem;
             text-align: left;
         }
+        
         td.service-name {
             font-weight: 600;
             color: var(--primary);
             font-size: 1.05rem;
         }
+        
         button, .dark-toggle {
             background: var(--primary);
             color: #fff;
@@ -98,31 +188,35 @@
             transition: background 0.2s, color 0.2s;
             margin-bottom: 1.2rem;
         }
+        
         button:disabled {
             background: #444a;
             color: #bbb;
             cursor: not-allowed;
         }
+        
         button:hover:not(:disabled), .dark-toggle:hover {
             background: var(--primary-hover);
         }
+        
         .latency {
             width: 6.5rem;
             text-align: center;
             font-family: 'JetBrains Mono', 'Fira Mono', 'Consolas', monospace;
             font-size: 1.05rem;
         }
+        
         .note {
             text-align: center;
         }
+        
         .footer {
             text-align: center;
             margin-top: 2.5rem;
+            padding: 1rem;
+            border-top: 1px solid var(--border);
         }
-        .header-controls {
-            display: flex;
-            gap: 0.5rem;
-        }
+        
         .dark-toggle, .notification-toggle {
             background: var(--secondary);
             color: var(--foreground);
@@ -133,39 +227,233 @@
             box-shadow: none;
             margin-bottom: 0;
         }
+        
         .notification-toggle.disabled {
             background: var(--error);
             color: #fff;
         }
+        
         a {
             color: var(--accent);
             text-decoration: underline;
             transition: color 0.2s;
         }
+        
         a:hover {
             color: var(--primary);
         }
+        
+        /* Map Styles */
+        #latencyMap {
+            width: 100%;
+            height: 100%;
+            min-height: 60vh;
+            border-radius: 0.7rem;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 16px 0 rgba(0,0,0,0.08);
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Leaflet map container styles */
+        .leaflet-container {
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+        }
+        
+        .leaflet-popup-content {
+            margin: 8px 12px;
+            line-height: 1.4;
+        }
+        
+        .leaflet-popup-content-wrapper {
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            background: var(--background);
+            color: var(--foreground);
+            border: 1px solid var(--border);
+        }
+        
+        .leaflet-popup-tip {
+            background: var(--background);
+            border: 1px solid var(--border);
+        }
+        
+        .leaflet-control-zoom a {
+            background: var(--background);
+            color: var(--foreground);
+            border: 1px solid var(--border);
+        }
+        
+        .leaflet-control-zoom a:hover {
+            background: var(--secondary);
+        }
+        
+        .leaflet-control-attribution {
+            background: rgba(0,0,0,0.7);
+            color: #ccc;
+        }
+        
+        .map-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .map-controls button {
+            margin-bottom: 0;
+            font-size: 0.9rem;
+            padding: 0.6rem 1rem;
+        }
+        
+        .auto-refresh-off {
+            background: var(--error) !important;
+        }
+        
+        .best-server {
+            background: linear-gradient(135deg, var(--success), #16a34a) !important;
+            color: white !important;
+            font-weight: 700 !important;
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.3) !important;
+        }
+        
+        .connection-quality {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.3rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        
+        .quality-excellent {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--success);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+        
+        .quality-good {
+            background: rgba(245, 158, 66, 0.2);
+            color: #f59e42;
+            border: 1px solid rgba(245, 158, 66, 0.3);
+        }
+        
+        .quality-fair {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        .quality-poor {
+            background: rgba(107, 114, 128, 0.2);
+            color: #6b7280;
+            border: 1px solid rgba(107, 114, 128, 0.3);
+        }
+        
+        .location-status {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .location-status.success {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+        
+        .location-status.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        .location-status.loading {
+            background: rgba(245, 158, 66, 0.1);
+            color: var(--accent);
+            border: 1px solid rgba(245, 158, 66, 0.3);
+        }
+        
+        @media (max-width: 1200px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .left-panel {
+                height: 50vh;
+            }
+            
+            .right-panel {
+                height: 50vh;
+                max-width: 100%;
+            }
+            
+            #latencyMap {
+                height: 100%;
+                min-height: 300px;
+            }
+            
+            .map-section {
+                min-height: 400px;
+            }
+        }
+        
         @media (max-width: 600px) {
             body {
                 font-size: 0.98rem;
-                padding: 0.5rem 0.1rem 0 0.1rem;
+                overflow: auto;
+                height: auto;
             }
+            
+            .main-container {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .left-panel {
+                height: 350px;
+            }
+            
+            .right-panel {
+                height: auto;
+                max-width: 100%;
+                overflow: visible;
+            }
+            
+            .map-section {
+                min-height: 300px;
+            }
+            
+            #latencyMap {
+                height: 300px;
+                min-height: 300px;
+                border-radius: 0.4rem;
+            }
+            
             header {
                 flex-direction: column;
                 align-items: center;
                 gap: 1rem;
             }
+            
             header h1 {
                 font-size: 1.2rem;
                 text-align: center;
             }
+            
             .header-controls {
                 gap: 0.3rem;
             }
+            
             .dark-toggle, .notification-toggle {
                 font-size: 0.95rem;
                 padding: 0.4rem 0.8rem;
             }
+            
             table {
                 font-size: 0.93rem;
                 display: block;
@@ -174,12 +462,22 @@
                 border-radius: 0.4rem;
                 box-shadow: none;
             }
+            
             th, td {
                 padding: 0.5rem 0.3rem;
             }
+            
             button {
                 font-size: 1rem;
                 padding: 0.7rem 1rem;
+            }
+            
+            .map-controls {
+                flex-direction: column;
+            }
+            
+            .map-controls button {
+                width: 100%;
             }
         }
         
@@ -237,6 +535,63 @@
         }
         
         .low-latency-popup .popup-close:hover {
+            opacity: 1;
+        }
+
+        /* Latency Improvement Popup Notification */
+        .latency-improvement-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: linear-gradient(135deg, #f59e42, #d97706);
+            color: white;
+            padding: 1.25rem 1.75rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 25px rgba(245, 158, 66, 0.3);
+            z-index: 1000;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 350px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            opacity: 0;
+        }
+        
+        .latency-improvement-popup.show {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+        
+        .latency-improvement-popup .popup-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .latency-improvement-popup .popup-content {
+            font-size: 0.9rem;
+            opacity: 0.95;
+            line-height: 1.4;
+        }
+        
+        .latency-improvement-popup .popup-close {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.75rem;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0;
+            margin: 0;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        
+        .latency-improvement-popup .popup-close:hover {
             opacity: 1;
         }
 
@@ -524,157 +879,175 @@
     }</script>
 </head>
 <body>
-<header>
-    <h1>MENA latency tracker</h1>
-    <div class="header-controls">
-        <button class="notification-toggle" id="notificationToggle" aria-label="Toggle sound notifications">🔔 Sound On</button>
-        <button class="dark-toggle" id="darkToggle" aria-label="Toggle dark mode">🌙 Dark Mode</button>
-    </div>
-</header>
-<hr>
-<div style="max-width: 100%; margin: 0 auto 2rem auto;">
-  <canvas id="latencyChart" style="width: 768px; max-width: 900px; height: 260px; display: block; box-sizing: border-box;" width="960" height="325"></canvas>
-</div>
-
-<!-- Interactive Latency Map -->
-<div id="locationStatus" class="location-status loading">
-    <span>📍</span>
-    <span>Requesting location permission...</span>
-</div>
-
-<div class="map-controls">
-    <button id="getLocationBtn" style="background: var(--primary);">📍 Get My Location</button>
-    <button id="centerMapBtn" style="background: var(--accent);">🎯 Center Map</button>
-    <button id="toggleLinesBtn" style="background: var(--secondary); color: var(--foreground); border: 1px solid var(--border);">🔗 Toggle Lines</button>
-    <button id="autoRefreshToggle" style="background: var(--success);">🔄 Auto-refresh On</button>
-</div>
-
-<div id="latencyMap"></div>
-
-<main>
-    <p>Click the "HTTP Ping" button to measure latency from your browser to various cloud provider datacenters in the Middle East and North Africa (MENA) region.</p>
-    <p>
-        <button id="pingButton">HTTP Ping</button>
-        <button id="exportDataBtn" style="background: var(--accent); margin-left: 0.5rem;">📊 Export Data</button>
-    </p>
-    <table>
-        <thead>
-        <tr>
-            <th>Region</th>
-            <th>Latency</th>
-        </tr>
-        </thead>
-        <!-- AWS Middle East Regions -->
-        <tbody>
-        <tr>
-            <td class="service-name" colspan="2"><a href="https://aws.amazon.com/">Amazon Web Services</a>™</td>
-        </tr>
-        <tr data-region="il-central-1 (Israel)">
-            <td>il-central-1 (Israel)</td>
-            <td class="latency" pingurl="https://dynamodb.il-central-1.amazonaws.com/ping"><span style="color:var(--error)">122 ms</span></td>
-        </tr>
-        <tr data-region="me-south-1 (Bahrain)">
-            <td>me-south-1 (Bahrain)</td>
-            <td class="latency" pingurl="https://dynamodb.me-south-1.amazonaws.com/ping"><span style="color:var(--error)">162 ms</span></td>
-        </tr>
-        <tr data-region="me-central-1 (UAE)">
-            <td>me-central-1 (UAE)</td>
-            <td class="latency" pingurl="https://streams.dynamodb.me-central-1.amazonaws.com/ping"><span style="color:var(--error)">173 ms</span></td>
-        </tr>
-        </tbody>
-        <!-- Google Cloud Middle East Regions -->
-        <tbody>
-        <tr>
-            <td class="service-name" colspan="2"><a href="https://cloud.google.com/">Google Cloud Platform</a></td>
-        </tr>
-        <tr data-region="me-central1 (Qatar)">
-            <td>me-central1 (Qatar)</td>
-            <td class="latency" pingurl="https://me-central1-5tkroniexa-ww.a.run.app/ping"><span style="color:var(--error)">153 ms</span></td>
-        </tr>
-        <tr data-region="me-central2 (Saudi Arabia)">
-            <td>me-central2 (Saudi Arabia)</td>
-            <td class="latency" pingurl="https://me-central2-5tkroniexa-wx.a.run.app/ping"><span style="color:var(--error)">148 ms</span></td>
-        </tr>
-        <tr data-region="me-west1 (Israel)">
-            <td>me-west1 (Israel)</td>
-            <td class="latency" pingurl="https://me-west1-5tkroniexa-zf.a.run.app/ping"><span style="color:var(--error)">116 ms</span></td>
-        </tr>
-        </tbody>
-        <!-- Vultr Middle East Region -->
-        <tbody>
-        <tr>
-            <td class="service-name" colspan="2"><a href="https://www.vultr.com/">Vultr</a></td>
-        </tr>
-        <tr data-region="Tel Aviv (Israel)">
-            <td>Tel Aviv (Israel)</td>
-            <td class="latency" pingurl="https://tlv-il-ping.vultr.com/ping" supportscors="false"><span style="color:var(--error)">119 ms</span></td>
-        </tr>
-        </tbody>
-    </table>
-    
-    <!-- Region Details Modal -->
-    <div id="regionModal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" id="modalTitle">Region Details</h2>
-                <button class="modal-close" id="modalClose">×</button>
+<div class="main-container">
+    <div class="left-panel">
+        <header>
+            <h1>MENA latency tracker</h1>
+            <div class="header-controls">
+                <button class="notification-toggle" id="notificationToggle" aria-label="Toggle sound notifications">🔔 Sound On</button>
+                <button class="dark-toggle" id="darkToggle" aria-label="Toggle dark mode">🌙 Dark Mode</button>
             </div>
-            <div class="modal-body">
-                <div class="detail-row">
-                    <span class="detail-label">Region Name:</span>
-                    <span class="detail-value" id="modalRegionName">-</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">IP Address:</span>
-                    <span class="detail-value" id="modalIpAddress">-</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Latency:</span>
-                    <span class="detail-value" id="modalLatency">-</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Last Ping Time:</span>
-                    <span class="detail-value" id="modalPingTime">-</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Status:</span>
-                    <span class="detail-value" id="modalStatus">-</span>
-                </div>
+        </header>
+        
+        <div class="map-section">
+            <div id="locationStatus" class="location-status loading">
+                <span>📍</span>
+                <span>Requesting location permission...</span>
             </div>
+
+            <div class="map-controls">
+                <button id="getLocationBtn" style="background: var(--primary);">📍 Get My Location</button>
+                <button id="centerMapBtn" style="background: var(--accent);">🎯 Center Map</button>
+                <button id="toggleLinesBtn" style="background: var(--secondary); color: var(--foreground); border: 1px solid var(--border);">🔗 Toggle Lines</button>
+                <button id="autoRefreshToggle" style="background: var(--success);">🔄 Auto-refresh On</button>
+            </div>
+
+            <div id="latencyMap"></div>
         </div>
     </div>
     
-    <!-- Low Latency Events Table -->
-    <div id="lowLatencySection" style="display: none;">
-        <h2 style="font-size: 1.5rem; margin-top: 3rem; margin-bottom: 1rem; color: var(--success);">🎯 Low Latency Events (&lt;100ms)</h2>
-        <table id="lowLatencyTable">
-            <thead>
-            <tr>
-                <th>Region</th>
-                <th>Time</th>
-                <th>Latency</th>
-            </tr>
-            </thead>
-            <tbody id="lowLatencyTableBody">
-            </tbody>
-        </table>
-        <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: var(--accent);">
-            <button id="clearLowLatencyButton" style="background: var(--error); font-size: 0.9rem; padding: 0.5rem 1rem;">Clear History</button>
-        </p>
+    <div class="right-panel">
+        <div class="chart-section">
+            <h2 class="section-title">📊 Latency History</h2>
+            <div style="max-width: 100%; margin: 0 auto;">
+                <canvas id="latencyChart" style="width: 100%; height: 260px; display: block; box-sizing: border-box;" width="960" height="325"></canvas>
+            </div>
+        </div>
+        
+        <div class="table-section">
+            <h2 class="section-title">🌐 Server Latency</h2>
+            <p>Click the "Ping" button to measure latency from your browser to various cloud provider datacenters in the Middle East and North Africa (MENA) region.</p>
+            <p>
+                <button id="pingButton">Ping</button>
+                <button id="exportDataBtn" style="background: var(--accent); margin-left: 0.5rem;">📊 Export Data</button>
+            </p>
+            <table>
+                <thead>
+                <tr>
+                    <th>Region</th>
+                    <th>Latency</th>
+                </tr>
+                </thead>
+                <!-- AWS Middle East Regions -->
+                <tbody>
+                <tr>
+                    <td class="service-name" colspan="2"><a href="https://aws.amazon.com/">Amazon Web Services</a>™</td>
+                </tr>
+                <tr data-region="il-central-1 (Israel)">
+                    <td>il-central-1 (Israel)</td>
+                    <td class="latency" pingurl="https://dynamodb.il-central-1.amazonaws.com/ping" supportscors="false"><span style="color:var(--error)">122 ms</span></td>
+                </tr>
+                <tr data-region="me-south-1 (Bahrain)">
+                    <td>me-south-1 (Bahrain)</td>
+                    <td class="latency" pingurl="https://dynamodb.me-south-1.amazonaws.com/ping" supportscors="false"><span style="color:var(--error)">162 ms</span></td>
+                </tr>
+                <tr data-region="me-central-1 (UAE)">
+                    <td>me-central-1 (UAE)</td>
+                    <td class="latency" pingurl="https://streams.dynamodb.me-central-1.amazonaws.com/ping" supportscors="false"><span style="color:var(--error)">173 ms</span></td>
+                </tr>
+                </tbody>
+                <!-- Google Cloud Middle East Regions -->
+                <tbody>
+                <tr>
+                    <td class="service-name" colspan="2"><a href="https://cloud.google.com/">Google Cloud Platform</a></td>
+                </tr>
+                <tr data-region="me-central1 (Qatar)">
+                    <td>me-central1 (Qatar)</td>
+                    <td class="latency" pingurl="https://me-central1-5tkroniexa-ww.a.run.app/ping"><span style="color:var(--error)">153 ms</span></td>
+                </tr>
+                <tr data-region="me-central2 (Saudi Arabia)">
+                    <td>me-central2 (Saudi Arabia)</td>
+                    <td class="latency" pingurl="https://me-central2-5tkroniexa-wx.a.run.app/ping"><span style="color:var(--error)">148 ms</span></td>
+                </tr>
+                <tr data-region="me-west1 (Israel)">
+                    <td>me-west1 (Israel)</td>
+                    <td class="latency" pingurl="https://me-west1-5tkroniexa-zf.a.run.app/ping"><span style="color:var(--error)">116 ms</span></td>
+                </tr>
+                </tbody>
+                <!-- Vultr Middle East Region -->
+                <tbody>
+                <tr>
+                    <td class="service-name" colspan="2"><a href="https://www.vultr.com/">Vultr</a></td>
+                </tr>
+                <tr data-region="Tel Aviv (Israel)">
+                    <td>Tel Aviv (Israel)</td>
+                    <td class="latency" pingurl="https://tlv-il-ping.vultr.com/ping" supportscors="false"><span style="color:var(--error)">119 ms</span></td>
+                </tr>
+                </tbody>
+            </table>
+            
+            <!-- Test Buttons for Popups -->
+            <div style="text-align: center; margin: 2rem 0;">
+                <button id="testPopupButton" style="background: var(--accent); color: white; border: none; border-radius: 0.5rem; padding: 0.8rem 1.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(245, 158, 66, 0.2); transition: background 0.2s; margin-right: 0.5rem;">
+                    🧪 Test Low Latency Popup
+                </button>
+                <button id="testImprovementPopupButton" style="background: #d97706; color: white; border: none; border-radius: 0.5rem; padding: 0.8rem 1.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(217, 119, 6, 0.2); transition: background 0.2s;">
+                    ⚡ Test Latency Improvement Popup
+                </button>
+            </div>
+        </div>
+        
+        <!-- Low Latency Events Table -->
+        <div id="lowLatencySection" style="display: none;">
+            <h2 style="font-size: 1.5rem; margin-top: 3rem; margin-bottom: 1rem; color: var(--success);">🎯 Low Latency Events (&lt;100ms)</h2>
+            <table id="lowLatencyTable">
+                <thead>
+                <tr>
+                    <th>Region</th>
+                    <th>Time</th>
+                    <th>Latency</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody id="lowLatencyTableBody">
+                </tbody>
+            </table>
+            <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: var(--accent);">
+                <button id="clearLowLatencyButton" style="background: var(--error); font-size: 0.9rem; padding: 0.5rem 1rem;">Clear History</button>
+                <button id="exportLowLatencyBtn" style="background: var(--accent); font-size: 0.9rem; padding: 0.5rem 1rem; margin-left: 0.5rem;">📊 Export Events</button>
+                <button id="clearCacheButton" style="background: #6b7280; color: white; font-size: 0.9rem; padding: 0.5rem 1rem; margin-left: 0.5rem;">Clear Cache</button>
+            </p>
+        </div>
     </div>
-    
-    <!-- Test Button for Low Latency Popup -->
-    <div style="text-align: center; margin: 2rem 0;">
-        <button id="testPopupButton" style="background: var(--accent); color: white; border: none; border-radius: 0.5rem; padding: 0.8rem 1.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(245, 158, 66, 0.2); transition: background 0.2s;">
-            🧪 Test Low Latency Popup
-        </button>
+</div>
+
+<!-- Region Details Modal -->
+<div id="regionModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title" id="modalTitle">Region Details</h2>
+            <button class="modal-close" id="modalClose">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="detail-row">
+                <span class="detail-label">Region Name:</span>
+                <span class="detail-value" id="modalRegionName">-</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">IP Address:</span>
+                <span class="detail-value" id="modalIpAddress">-</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Latency:</span>
+                <span class="detail-value" id="modalLatency">-</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Last Ping Time:</span>
+                <span class="detail-value" id="modalPingTime">-</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Status:</span>
+                <span class="detail-value" id="modalStatus">-</span>
+            </div>
+        </div>
     </div>
-</main>
+</div>
+
 <footer class="footer">
-    <hr>
     <p>MENA latency tracker, by SanGraphic based on Cloudping.info</p>
     <p style="font-size:0.95em;color:var(--accent);">Copyright © 2010-2024 Michael Leonhard. Amazon Web Services and AWS are trademarks of Amazon.com, Inc. or its affiliates in the United States and/or other countries.</p>
 </footer>
+
 <script type="text/javascript">
     // Server locations data with coordinates
     const serverLocations = {
@@ -689,6 +1062,9 @@
     
     // Store latest latency data for each region
     let latestLatencyData = {};
+    
+    // Store previous latency data for improvement detection
+    let previousLatencyData = {};
     
     // Auto-refresh and best server tracking
     let autoRefreshEnabled = true;
@@ -826,6 +1202,16 @@
                 
                 statusDiv.className = 'location-status success';
                 statusDiv.innerHTML = '<span>✅</span><span>Location obtained successfully</span>';
+                
+                // Hide the status after 5 seconds
+                setTimeout(() => {
+                    if (statusDiv.classList.contains('success')) {
+                        statusDiv.style.opacity = '0';
+                        setTimeout(() => {
+                            statusDiv.style.display = 'none';
+                        }, 300);
+                    }
+                }, 5000);
             },
             function(error) {
                 let errorMessage = 'Unknown error occurred';
@@ -1046,6 +1432,35 @@
         link.click();
         document.body.removeChild(link);
     }
+    
+    // Export low latency events to CSV
+    function exportLowLatencyEventsToCSV() {
+        if (lowLatencyEvents.length === 0) {
+            alert('No low latency events to export.');
+            return;
+        }
+        
+        const now = new Date();
+        const timestamp = now.toISOString().replace(/[:.]/g, '-');
+        
+        // Create CSV content
+        let csvContent = 'Region,Latency (ms),Time,Timestamp\n';
+        
+        lowLatencyEvents.forEach(event => {
+            csvContent += `"${event.region}","${event.latency}","${event.time}","${new Date(event.timestamp).toISOString()}"\n`;
+        });
+        
+        // Create and download file
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `mena-low-latency-events-${timestamp}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
 
     // Initialize map when page loads
     function initializeMapAndControls() {
@@ -1238,6 +1653,29 @@
     let lowLatencyEvents = [];
     const maxLowLatencyEvents = 50;
     
+    // Track last low latency alert time for each region to prevent spam
+    let lastLowLatencyAlert = {};
+    
+    // Load low latency events from localStorage on page load
+    function loadLowLatencyEventsFromStorage() {
+        const stored = localStorage.getItem('lowLatencyEvents');
+        if (stored) {
+            try {
+                const parsed = JSON.parse(stored);
+                if (Array.isArray(parsed)) {
+                    lowLatencyEvents = parsed;
+                }
+            } catch (e) {
+                // Ignore parse errors
+            }
+        }
+    }
+    
+    // Save low latency events to localStorage
+    function saveLowLatencyEventsToStorage() {
+        localStorage.setItem('lowLatencyEvents', JSON.stringify(lowLatencyEvents));
+    }
+    
     function addLowLatencyEvent(regionName, latency) {
         const now = new Date();
         const timeString = now.toLocaleString([], {
@@ -1249,6 +1687,7 @@
         });
         
         const event = {
+            id: `${regionName}-${now.getTime()}-${Math.floor(Math.random()*100000)}`,
             region: regionName,
             time: timeString,
             latency: latency,
@@ -1262,7 +1701,44 @@
             lowLatencyEvents = lowLatencyEvents.slice(0, maxLowLatencyEvents);
         }
         
+        saveLowLatencyEventsToStorage();
         updateLowLatencyTable();
+    }
+    
+    function deleteLowLatencyEvent(eventId) {
+        lowLatencyEvents = lowLatencyEvents.filter(ev => ev.id !== eventId);
+        saveLowLatencyEventsToStorage();
+        updateLowLatencyTable();
+    }
+    
+    // Check if we should alert for low latency (prevents spam)
+    function shouldAlertLowLatency(regionName, currentLatency) {
+        const lastAlert = lastLowLatencyAlert[regionName];
+        
+        if (!lastAlert) {
+            // First time alerting for this region
+            lastLowLatencyAlert[regionName] = {
+                latency: currentLatency,
+                timestamp: Date.now()
+            };
+            return true;
+        }
+        
+        // Check if current latency is within 10ms of last alert
+        const latencyDifference = Math.abs(currentLatency - lastAlert.latency);
+        
+        if (latencyDifference <= 10) {
+            // Within 10ms, don't alert again
+            return false;
+        }
+        
+        // Update last alert data
+        lastLowLatencyAlert[regionName] = {
+            latency: currentLatency,
+            timestamp: Date.now()
+        };
+        
+        return true;
     }
     
     function updateLowLatencyTable() {
@@ -1283,18 +1759,28 @@
             if (event.latency >= 60) {
                 latencyColor = '#facc15'; // yellow
             }
-            
             row.innerHTML = `
                 <td style="font-weight: 500;">${event.region}</td>
                 <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.95rem;">${event.time}</td>
                 <td style="font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; color: ${latencyColor}; font-weight: 600;">${event.latency} ms</td>
+                <td><button class="delete-low-latency-event" data-id="${event.id}" style="background: var(--error); color: white; border: none; border-radius: 0.3rem; padding: 0.2rem 0.7rem; font-size: 1rem; cursor: pointer;">🗑️</button></td>
             `;
             tbody.appendChild(row);
+        });
+        
+        // Add event listeners for delete buttons
+        Array.from(document.getElementsByClassName('delete-low-latency-event')).forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                const eventId = this.getAttribute('data-id');
+                deleteLowLatencyEvent(eventId);
+            });
         });
     }
     
     function clearLowLatencyEvents() {
         lowLatencyEvents = [];
+        lastLowLatencyAlert = {}; // Also clear spam tracking
+        saveLowLatencyEventsToStorage();
         updateLowLatencyTable();
     }
     
@@ -1303,9 +1789,35 @@
         // Initialize map and controls
         initializeMapAndControls();
         
+        loadLowLatencyEventsFromStorage();
+        updateLowLatencyTable();
+        
         const clearButton = document.getElementById('clearLowLatencyButton');
         if (clearButton) {
             clearButton.addEventListener('click', clearLowLatencyEvents);
+        }
+        
+        // Export low latency events button event listener
+        const exportLowLatencyButton = document.getElementById('exportLowLatencyBtn');
+        if (exportLowLatencyButton) {
+            exportLowLatencyButton.addEventListener('click', exportLowLatencyEventsToCSV);
+        }
+        
+        // Clear Cache button event listener
+        const clearCacheButton = document.getElementById('clearCacheButton');
+        if (clearCacheButton) {
+            clearCacheButton.addEventListener('click', function() {
+                // Clear localStorage
+                localStorage.clear();
+                // Clear sessionStorage
+                sessionStorage.clear();
+                // Clear all cookies for this domain
+                document.cookie.split(';').forEach(function(c) {
+                    document.cookie = c.replace(/^ +/, '').replace(/=.*/, '=;expires=' + new Date(0).toUTCString() + ';path=/');
+                });
+                // Reload the page
+                location.reload();
+            });
         }
         
         // Test popup button event listener
@@ -1317,9 +1829,28 @@
                 const randomServer = serverNames[Math.floor(Math.random() * serverNames.length)];
                 const testLatency = Math.floor(Math.random() * 40) + 30; // Random latency between 30-69ms
                 
+                // Reset spam tracking for this server to ensure test works
+                delete lastLowLatencyAlert[randomServer];
+                
                 addLowLatencyEvent(randomServer, testLatency);
                 playLowLatencyAlert();
                 showLowLatencyPopup(randomServer, testLatency);
+            });
+        }
+        
+        // Test improvement popup button event listener
+        const testImprovementPopupButton = document.getElementById('testImprovementPopupButton');
+        if (testImprovementPopupButton) {
+            testImprovementPopupButton.addEventListener('click', function() {
+                // Simulate a latency improvement with test data using real server names
+                const serverNames = Object.keys(serverLocations);
+                const randomServer = serverNames[Math.floor(Math.random() * serverNames.length)];
+                const currentLatency = Math.floor(Math.random() * 50) + 50; // Random latency between 50-99ms
+                const previousLatency = currentLatency + Math.floor(Math.random() * 50) + 35; // Previous latency with 35+ ms improvement
+                const improvement = previousLatency - currentLatency;
+                
+                playHarshImprovementAlert();
+                showLatencyImprovementPopup(randomServer, currentLatency, previousLatency, improvement);
             });
         }
     });
@@ -1327,137 +1858,391 @@
     // --- Sound notification setup ---
     let isPlayingAlert = false;
     let audioContext = null;
+    let audioContextInitialized = false;
     
-    function initAudioContext() {
-        if (!audioContext) {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    async function initAudioContext() {
+        try {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            
+            // Resume context if it's suspended (common after user interaction)
+            if (audioContext.state === 'suspended') {
+                await audioContext.resume();
+            }
+            
+            // Wait for the context to be running
+            if (audioContext.state !== 'running') {
+                await new Promise(resolve => {
+                    audioContext.addEventListener('statechange', resolve, { once: true });
+                });
+            }
+            
+            audioContextInitialized = true;
+            return audioContext;
+        } catch (error) {
+            console.warn('Audio context initialization failed:', error);
+            return null;
         }
-        // Resume context if it's suspended (common after user interaction)
-        if (audioContext.state === 'suspended') {
-            audioContext.resume();
-        }
-        return audioContext;
     }
     
-    function createDingSound() {
-        const ctx = initAudioContext();
-        
-        // Create oscillators for a loud alarm/warning sound
-        const oscillator1 = ctx.createOscillator();
-        const oscillator2 = ctx.createOscillator();
-        const oscillator3 = ctx.createOscillator();
-        
-        const gainNode1 = ctx.createGain();
-        const gainNode2 = ctx.createGain();
-        const gainNode3 = ctx.createGain();
-        const masterGain = ctx.createGain();
-        
-        // Connect oscillators to their gain nodes
-        oscillator1.connect(gainNode1);
-        oscillator2.connect(gainNode2);
-        oscillator3.connect(gainNode3);
-        
-        // Connect gain nodes to master gain
-        gainNode1.connect(masterGain);
-        gainNode2.connect(masterGain);
-        gainNode3.connect(masterGain);
-        
-        // Connect master gain to destination
-        masterGain.connect(ctx.destination);
-        
-        // Create an urgent alarm sound with alternating frequencies
-        // Primary alarm tone - high pitched and urgent
-        oscillator1.frequency.setValueAtTime(1200, ctx.currentTime);
-        oscillator1.frequency.setValueAtTime(800, ctx.currentTime + 0.1);
-        oscillator1.frequency.setValueAtTime(1200, ctx.currentTime + 0.2);
-        oscillator1.frequency.setValueAtTime(800, ctx.currentTime + 0.3);
-        oscillator1.frequency.setValueAtTime(1200, ctx.currentTime + 0.4);
-        
-        // Secondary alarm tone - creates urgency
-        oscillator2.frequency.setValueAtTime(1600, ctx.currentTime);
-        oscillator2.frequency.setValueAtTime(1000, ctx.currentTime + 0.1);
-        oscillator2.frequency.setValueAtTime(1600, ctx.currentTime + 0.2);
-        oscillator2.frequency.setValueAtTime(1000, ctx.currentTime + 0.3);
-        oscillator2.frequency.setValueAtTime(1600, ctx.currentTime + 0.4);
-        
-        // Low frequency for depth and attention
-        oscillator3.frequency.setValueAtTime(400, ctx.currentTime);
-        oscillator3.frequency.setValueAtTime(300, ctx.currentTime + 0.1);
-        oscillator3.frequency.setValueAtTime(400, ctx.currentTime + 0.2);
-        oscillator3.frequency.setValueAtTime(300, ctx.currentTime + 0.3);
-        oscillator3.frequency.setValueAtTime(400, ctx.currentTime + 0.4);
-        
-        // Use sawtooth and square waves for harsh, attention-grabbing sound
-        oscillator1.type = 'sawtooth';
-        oscillator2.type = 'square';
-        oscillator3.type = 'sawtooth';
-        
-        // Very loud gains with pulsing effect
-        gainNode1.gain.setValueAtTime(1.0, ctx.currentTime);
-        gainNode1.gain.setValueAtTime(0.7, ctx.currentTime + 0.05);
-        gainNode1.gain.setValueAtTime(1.0, ctx.currentTime + 0.1);
-        gainNode1.gain.setValueAtTime(0.7, ctx.currentTime + 0.15);
-        gainNode1.gain.setValueAtTime(1.0, ctx.currentTime + 0.2);
-        gainNode1.gain.setValueAtTime(0.7, ctx.currentTime + 0.25);
-        gainNode1.gain.setValueAtTime(1.0, ctx.currentTime + 0.3);
-        gainNode1.gain.setValueAtTime(0.7, ctx.currentTime + 0.35);
-        gainNode1.gain.setValueAtTime(1.0, ctx.currentTime + 0.4);
-        gainNode1.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
-        
-        gainNode2.gain.setValueAtTime(0.8, ctx.currentTime);
-        gainNode2.gain.setValueAtTime(0.5, ctx.currentTime + 0.05);
-        gainNode2.gain.setValueAtTime(0.8, ctx.currentTime + 0.1);
-        gainNode2.gain.setValueAtTime(0.5, ctx.currentTime + 0.15);
-        gainNode2.gain.setValueAtTime(0.8, ctx.currentTime + 0.2);
-        gainNode2.gain.setValueAtTime(0.5, ctx.currentTime + 0.25);
-        gainNode2.gain.setValueAtTime(0.8, ctx.currentTime + 0.3);
-        gainNode2.gain.setValueAtTime(0.5, ctx.currentTime + 0.35);
-        gainNode2.gain.setValueAtTime(0.8, ctx.currentTime + 0.4);
-        gainNode2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
-        
-        gainNode3.gain.setValueAtTime(0.6, ctx.currentTime);
-        gainNode3.gain.setValueAtTime(0.3, ctx.currentTime + 0.05);
-        gainNode3.gain.setValueAtTime(0.6, ctx.currentTime + 0.1);
-        gainNode3.gain.setValueAtTime(0.3, ctx.currentTime + 0.15);
-        gainNode3.gain.setValueAtTime(0.6, ctx.currentTime + 0.2);
-        gainNode3.gain.setValueAtTime(0.3, ctx.currentTime + 0.25);
-        gainNode3.gain.setValueAtTime(0.6, ctx.currentTime + 0.3);
-        gainNode3.gain.setValueAtTime(0.3, ctx.currentTime + 0.35);
-        gainNode3.gain.setValueAtTime(0.6, ctx.currentTime + 0.4);
-        gainNode3.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
-        
-        // Master gain - MAXIMUM VOLUME for alarm effect
-        masterGain.gain.setValueAtTime(1.0, ctx.currentTime);
-        masterGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
-        
-        // Start all oscillators
-        oscillator1.start(ctx.currentTime);
-        oscillator2.start(ctx.currentTime);
-        oscillator3.start(ctx.currentTime);
-        
-        // Stop all oscillators
-        oscillator1.stop(ctx.currentTime + 0.5);
-        oscillator2.stop(ctx.currentTime + 0.5);
-        oscillator3.stop(ctx.currentTime + 0.5);
-        
-        return new Promise(resolve => {
-            oscillator1.onended = resolve;
-        });
+    // Initialize audio context on first user interaction
+    function initializeAudioOnInteraction() {
+        if (!audioContextInitialized) {
+            initAudioContext();
+        }
     }
     
+    // Add event listeners for audio initialization
+    document.addEventListener('click', initializeAudioOnInteraction, { once: true });
+    document.addEventListener('keydown', initializeAudioOnInteraction, { once: true });
+    document.addEventListener('touchstart', initializeAudioOnInteraction, { once: true });
+    
+    async function createDingSound() {
+        const ctx = await initAudioContext();
+        if (!ctx) {
+            console.warn('Audio context not available for sound playback');
+            return;
+        }
+        
+        try {
+            // Create oscillators for a loud alarm/warning sound
+            const oscillator1 = ctx.createOscillator();
+            const oscillator2 = ctx.createOscillator();
+            const oscillator3 = ctx.createOscillator();
+            
+            const gainNode1 = ctx.createGain();
+            const gainNode2 = ctx.createGain();
+            const gainNode3 = ctx.createGain();
+            const masterGain = ctx.createGain();
+            
+            // Connect oscillators to their gain nodes
+            oscillator1.connect(gainNode1);
+            oscillator2.connect(gainNode2);
+            oscillator3.connect(gainNode3);
+            
+            // Connect gain nodes to master gain
+            gainNode1.connect(masterGain);
+            gainNode2.connect(masterGain);
+            gainNode3.connect(masterGain);
+            
+            // Connect master gain to destination
+            masterGain.connect(ctx.destination);
+            
+            // Create an urgent alarm sound with alternating frequencies
+            // Primary alarm tone - high pitched and urgent
+            oscillator1.frequency.setValueAtTime(1200, ctx.currentTime);
+            oscillator1.frequency.setValueAtTime(800, ctx.currentTime + 0.1);
+            oscillator1.frequency.setValueAtTime(1200, ctx.currentTime + 0.2);
+            oscillator1.frequency.setValueAtTime(800, ctx.currentTime + 0.3);
+            oscillator1.frequency.setValueAtTime(1200, ctx.currentTime + 0.4);
+            
+            // Secondary alarm tone - creates urgency
+            oscillator2.frequency.setValueAtTime(1600, ctx.currentTime);
+            oscillator2.frequency.setValueAtTime(1000, ctx.currentTime + 0.1);
+            oscillator2.frequency.setValueAtTime(1600, ctx.currentTime + 0.2);
+            oscillator2.frequency.setValueAtTime(1000, ctx.currentTime + 0.3);
+            oscillator2.frequency.setValueAtTime(1600, ctx.currentTime + 0.4);
+            
+            // Low frequency for depth and attention
+            oscillator3.frequency.setValueAtTime(400, ctx.currentTime);
+            oscillator3.frequency.setValueAtTime(300, ctx.currentTime + 0.1);
+            oscillator3.frequency.setValueAtTime(400, ctx.currentTime + 0.2);
+            oscillator3.frequency.setValueAtTime(300, ctx.currentTime + 0.3);
+            oscillator3.frequency.setValueAtTime(400, ctx.currentTime + 0.4);
+            
+            // Use sawtooth and square waves for harsh, attention-grabbing sound
+            oscillator1.type = 'sawtooth';
+            oscillator2.type = 'square';
+            oscillator3.type = 'sawtooth';
+            
+            // Very loud gains with pulsing effect
+            gainNode1.gain.setValueAtTime(1.0, ctx.currentTime);
+            gainNode1.gain.setValueAtTime(0.7, ctx.currentTime + 0.05);
+            gainNode1.gain.setValueAtTime(1.0, ctx.currentTime + 0.1);
+            gainNode1.gain.setValueAtTime(0.7, ctx.currentTime + 0.15);
+            gainNode1.gain.setValueAtTime(1.0, ctx.currentTime + 0.2);
+            gainNode1.gain.setValueAtTime(0.7, ctx.currentTime + 0.25);
+            gainNode1.gain.setValueAtTime(1.0, ctx.currentTime + 0.3);
+            gainNode1.gain.setValueAtTime(0.7, ctx.currentTime + 0.35);
+            gainNode1.gain.setValueAtTime(1.0, ctx.currentTime + 0.4);
+            gainNode1.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+            
+            gainNode2.gain.setValueAtTime(0.8, ctx.currentTime);
+            gainNode2.gain.setValueAtTime(0.5, ctx.currentTime + 0.05);
+            gainNode2.gain.setValueAtTime(0.8, ctx.currentTime + 0.1);
+            gainNode2.gain.setValueAtTime(0.5, ctx.currentTime + 0.15);
+            gainNode2.gain.setValueAtTime(0.8, ctx.currentTime + 0.2);
+            gainNode2.gain.setValueAtTime(0.5, ctx.currentTime + 0.25);
+            gainNode2.gain.setValueAtTime(0.8, ctx.currentTime + 0.3);
+            gainNode2.gain.setValueAtTime(0.5, ctx.currentTime + 0.35);
+            gainNode2.gain.setValueAtTime(0.8, ctx.currentTime + 0.4);
+            gainNode2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+            
+            gainNode3.gain.setValueAtTime(0.6, ctx.currentTime);
+            gainNode3.gain.setValueAtTime(0.3, ctx.currentTime + 0.05);
+            gainNode3.gain.setValueAtTime(0.6, ctx.currentTime + 0.1);
+            gainNode3.gain.setValueAtTime(0.3, ctx.currentTime + 0.15);
+            gainNode3.gain.setValueAtTime(0.6, ctx.currentTime + 0.2);
+            gainNode3.gain.setValueAtTime(0.3, ctx.currentTime + 0.25);
+            gainNode3.gain.setValueAtTime(0.6, ctx.currentTime + 0.3);
+            gainNode3.gain.setValueAtTime(0.3, ctx.currentTime + 0.35);
+            gainNode3.gain.setValueAtTime(0.6, ctx.currentTime + 0.4);
+            gainNode3.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+            
+            // Master gain - MAXIMUM VOLUME for alarm effect
+            masterGain.gain.setValueAtTime(1.0, ctx.currentTime);
+            masterGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+            
+            // Start all oscillators
+            oscillator1.start(ctx.currentTime);
+            oscillator2.start(ctx.currentTime);
+            oscillator3.start(ctx.currentTime);
+            
+            // Stop all oscillators
+            oscillator1.stop(ctx.currentTime + 0.5);
+            oscillator2.stop(ctx.currentTime + 0.5);
+            oscillator3.stop(ctx.currentTime + 0.5);
+            
+            return new Promise(resolve => {
+                oscillator1.onended = resolve;
+            });
+        } catch (error) {
+            console.warn('Sound playback failed:', error);
+        }
+    }
+    
+    // Play low latency alert sound
     async function playLowLatencyAlert() {
-        if (isPlayingAlert || !soundNotificationsEnabled) return;
+        if (!soundNotificationsEnabled) return;
+        
+        if (isPlayingAlert) return;
         isPlayingAlert = true;
         
         try {
-            for (let i = 0; i < 5; i++) {
-                await createDingSound();
-                if (i < 4) { // Don't wait after the last ding
-                    await new Promise(resolve => setTimeout(resolve, 2000));
-                }
-            }
+            await createDingSound();
         } catch (error) {
-            console.warn('Audio playback failed:', error);
+            console.warn('Low latency sound failed:', error);
+        } finally {
+            isPlayingAlert = false;
+        }
+    }
+
+    // Create harsh improvement sound
+    async function createHarshImprovementSound() {
+        const ctx = await initAudioContext();
+        if (!ctx) {
+            console.warn('Audio context not available for harsh sound playback');
+            return;
+        }
+        
+        try {
+            // Create oscillators for a harsh, aggressive sound
+            const oscillator1 = ctx.createOscillator();
+            const oscillator2 = ctx.createOscillator();
+            const oscillator3 = ctx.createOscillator();
+            const oscillator4 = ctx.createOscillator();
+            
+            const gainNode1 = ctx.createGain();
+            const gainNode2 = ctx.createGain();
+            const gainNode3 = ctx.createGain();
+            const gainNode4 = ctx.createGain();
+            const masterGain = ctx.createGain();
+            
+            // Connect oscillators to their gain nodes
+            oscillator1.connect(gainNode1);
+            oscillator2.connect(gainNode2);
+            oscillator3.connect(gainNode3);
+            oscillator4.connect(gainNode4);
+            
+            // Connect gain nodes to master gain
+            gainNode1.connect(masterGain);
+            gainNode2.connect(masterGain);
+            gainNode3.connect(masterGain);
+            gainNode4.connect(masterGain);
+            
+            // Connect master gain to destination
+            masterGain.connect(ctx.destination);
+            
+            // Create a harsh, aggressive sound with rapid frequency changes
+            // High-pitched aggressive tone
+            oscillator1.frequency.setValueAtTime(2000, ctx.currentTime);
+            oscillator1.frequency.setValueAtTime(1500, ctx.currentTime + 0.05);
+            oscillator1.frequency.setValueAtTime(2500, ctx.currentTime + 0.1);
+            oscillator1.frequency.setValueAtTime(1800, ctx.currentTime + 0.15);
+            oscillator1.frequency.setValueAtTime(2200, ctx.currentTime + 0.2);
+            oscillator1.frequency.setValueAtTime(1600, ctx.currentTime + 0.25);
+            oscillator1.frequency.setValueAtTime(2400, ctx.currentTime + 0.3);
+            oscillator1.frequency.setValueAtTime(1700, ctx.currentTime + 0.35);
+            oscillator1.frequency.setValueAtTime(2300, ctx.currentTime + 0.4);
+            
+            // Mid-range aggressive tone
+            oscillator2.frequency.setValueAtTime(800, ctx.currentTime);
+            oscillator2.frequency.setValueAtTime(1200, ctx.currentTime + 0.05);
+            oscillator2.frequency.setValueAtTime(600, ctx.currentTime + 0.1);
+            oscillator2.frequency.setValueAtTime(1400, ctx.currentTime + 0.15);
+            oscillator2.frequency.setValueAtTime(700, ctx.currentTime + 0.2);
+            oscillator2.frequency.setValueAtTime(1300, ctx.currentTime + 0.25);
+            oscillator2.frequency.setValueAtTime(650, ctx.currentTime + 0.3);
+            oscillator2.frequency.setValueAtTime(1350, ctx.currentTime + 0.35);
+            oscillator2.frequency.setValueAtTime(750, ctx.currentTime + 0.4);
+            
+            // Low frequency for depth
+            oscillator3.frequency.setValueAtTime(200, ctx.currentTime);
+            oscillator3.frequency.setValueAtTime(300, ctx.currentTime + 0.05);
+            oscillator3.frequency.setValueAtTime(150, ctx.currentTime + 0.1);
+            oscillator3.frequency.setValueAtTime(350, ctx.currentTime + 0.15);
+            oscillator3.frequency.setValueAtTime(180, ctx.currentTime + 0.2);
+            oscillator3.frequency.setValueAtTime(320, ctx.currentTime + 0.25);
+            oscillator3.frequency.setValueAtTime(160, ctx.currentTime + 0.3);
+            oscillator3.frequency.setValueAtTime(340, ctx.currentTime + 0.35);
+            oscillator3.frequency.setValueAtTime(190, ctx.currentTime + 0.4);
+            
+            // Ultra-high frequency for harshness
+            oscillator4.frequency.setValueAtTime(4000, ctx.currentTime);
+            oscillator4.frequency.setValueAtTime(3500, ctx.currentTime + 0.05);
+            oscillator4.frequency.setValueAtTime(4500, ctx.currentTime + 0.1);
+            oscillator4.frequency.setValueAtTime(3300, ctx.currentTime + 0.15);
+            oscillator4.frequency.setValueAtTime(4700, ctx.currentTime + 0.2);
+            oscillator4.frequency.setValueAtTime(3100, ctx.currentTime + 0.25);
+            oscillator4.frequency.setValueAtTime(4900, ctx.currentTime + 0.3);
+            oscillator4.frequency.setValueAtTime(2900, ctx.currentTime + 0.35);
+            oscillator4.frequency.setValueAtTime(5100, ctx.currentTime + 0.4);
+            
+            // Use harsh wave types
+            oscillator1.type = 'sawtooth';
+            oscillator2.type = 'square';
+            oscillator3.type = 'sawtooth';
+            oscillator4.type = 'triangle';
+            
+            // Very aggressive gains with rapid pulsing
+            gainNode1.gain.setValueAtTime(1.0, ctx.currentTime);
+            gainNode1.gain.setValueAtTime(0.3, ctx.currentTime + 0.02);
+            gainNode1.gain.setValueAtTime(1.0, ctx.currentTime + 0.04);
+            gainNode1.gain.setValueAtTime(0.2, ctx.currentTime + 0.06);
+            gainNode1.gain.setValueAtTime(1.0, ctx.currentTime + 0.08);
+            gainNode1.gain.setValueAtTime(0.4, ctx.currentTime + 0.1);
+            gainNode1.gain.setValueAtTime(1.0, ctx.currentTime + 0.12);
+            gainNode1.gain.setValueAtTime(0.1, ctx.currentTime + 0.14);
+            gainNode1.gain.setValueAtTime(1.0, ctx.currentTime + 0.16);
+            gainNode1.gain.setValueAtTime(0.5, ctx.currentTime + 0.18);
+            gainNode1.gain.setValueAtTime(1.0, ctx.currentTime + 0.2);
+            gainNode1.gain.setValueAtTime(0.2, ctx.currentTime + 0.22);
+            gainNode1.gain.setValueAtTime(1.0, ctx.currentTime + 0.24);
+            gainNode1.gain.setValueAtTime(0.3, ctx.currentTime + 0.26);
+            gainNode1.gain.setValueAtTime(1.0, ctx.currentTime + 0.28);
+            gainNode1.gain.setValueAtTime(0.1, ctx.currentTime + 0.3);
+            gainNode1.gain.setValueAtTime(1.0, ctx.currentTime + 0.32);
+            gainNode1.gain.setValueAtTime(0.4, ctx.currentTime + 0.34);
+            gainNode1.gain.setValueAtTime(1.0, ctx.currentTime + 0.36);
+            gainNode1.gain.setValueAtTime(0.2, ctx.currentTime + 0.38);
+            gainNode1.gain.setValueAtTime(1.0, ctx.currentTime + 0.4);
+            gainNode1.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+            
+            gainNode2.gain.setValueAtTime(0.8, ctx.currentTime);
+            gainNode2.gain.setValueAtTime(0.2, ctx.currentTime + 0.02);
+            gainNode2.gain.setValueAtTime(0.8, ctx.currentTime + 0.04);
+            gainNode2.gain.setValueAtTime(0.1, ctx.currentTime + 0.06);
+            gainNode2.gain.setValueAtTime(0.8, ctx.currentTime + 0.08);
+            gainNode2.gain.setValueAtTime(0.3, ctx.currentTime + 0.1);
+            gainNode2.gain.setValueAtTime(0.8, ctx.currentTime + 0.12);
+            gainNode2.gain.setValueAtTime(0.1, ctx.currentTime + 0.14);
+            gainNode2.gain.setValueAtTime(0.8, ctx.currentTime + 0.16);
+            gainNode2.gain.setValueAtTime(0.4, ctx.currentTime + 0.18);
+            gainNode2.gain.setValueAtTime(0.8, ctx.currentTime + 0.2);
+            gainNode2.gain.setValueAtTime(0.2, ctx.currentTime + 0.22);
+            gainNode2.gain.setValueAtTime(0.8, ctx.currentTime + 0.24);
+            gainNode2.gain.setValueAtTime(0.3, ctx.currentTime + 0.26);
+            gainNode2.gain.setValueAtTime(0.8, ctx.currentTime + 0.28);
+            gainNode2.gain.setValueAtTime(0.1, ctx.currentTime + 0.3);
+            gainNode2.gain.setValueAtTime(0.8, ctx.currentTime + 0.32);
+            gainNode2.gain.setValueAtTime(0.4, ctx.currentTime + 0.34);
+            gainNode2.gain.setValueAtTime(0.8, ctx.currentTime + 0.36);
+            gainNode2.gain.setValueAtTime(0.2, ctx.currentTime + 0.38);
+            gainNode2.gain.setValueAtTime(0.8, ctx.currentTime + 0.4);
+            gainNode2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+            
+            gainNode3.gain.setValueAtTime(0.6, ctx.currentTime);
+            gainNode3.gain.setValueAtTime(0.1, ctx.currentTime + 0.02);
+            gainNode3.gain.setValueAtTime(0.6, ctx.currentTime + 0.04);
+            gainNode3.gain.setValueAtTime(0.05, ctx.currentTime + 0.06);
+            gainNode3.gain.setValueAtTime(0.6, ctx.currentTime + 0.08);
+            gainNode3.gain.setValueAtTime(0.2, ctx.currentTime + 0.1);
+            gainNode3.gain.setValueAtTime(0.6, ctx.currentTime + 0.12);
+            gainNode3.gain.setValueAtTime(0.05, ctx.currentTime + 0.14);
+            gainNode3.gain.setValueAtTime(0.6, ctx.currentTime + 0.16);
+            gainNode3.gain.setValueAtTime(0.3, ctx.currentTime + 0.18);
+            gainNode3.gain.setValueAtTime(0.6, ctx.currentTime + 0.2);
+            gainNode3.gain.setValueAtTime(0.1, ctx.currentTime + 0.22);
+            gainNode3.gain.setValueAtTime(0.6, ctx.currentTime + 0.24);
+            gainNode3.gain.setValueAtTime(0.2, ctx.currentTime + 0.26);
+            gainNode3.gain.setValueAtTime(0.6, ctx.currentTime + 0.28);
+            gainNode3.gain.setValueAtTime(0.05, ctx.currentTime + 0.3);
+            gainNode3.gain.setValueAtTime(0.6, ctx.currentTime + 0.32);
+            gainNode3.gain.setValueAtTime(0.3, ctx.currentTime + 0.34);
+            gainNode3.gain.setValueAtTime(0.6, ctx.currentTime + 0.36);
+            gainNode3.gain.setValueAtTime(0.1, ctx.currentTime + 0.38);
+            gainNode3.gain.setValueAtTime(0.6, ctx.currentTime + 0.4);
+            gainNode3.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+            
+            gainNode4.gain.setValueAtTime(0.4, ctx.currentTime);
+            gainNode4.gain.setValueAtTime(0.05, ctx.currentTime + 0.02);
+            gainNode4.gain.setValueAtTime(0.4, ctx.currentTime + 0.04);
+            gainNode4.gain.setValueAtTime(0.02, ctx.currentTime + 0.06);
+            gainNode4.gain.setValueAtTime(0.4, ctx.currentTime + 0.08);
+            gainNode4.gain.setValueAtTime(0.1, ctx.currentTime + 0.1);
+            gainNode4.gain.setValueAtTime(0.4, ctx.currentTime + 0.12);
+            gainNode4.gain.setValueAtTime(0.02, ctx.currentTime + 0.14);
+            gainNode4.gain.setValueAtTime(0.4, ctx.currentTime + 0.16);
+            gainNode4.gain.setValueAtTime(0.15, ctx.currentTime + 0.18);
+            gainNode4.gain.setValueAtTime(0.4, ctx.currentTime + 0.2);
+            gainNode4.gain.setValueAtTime(0.05, ctx.currentTime + 0.22);
+            gainNode4.gain.setValueAtTime(0.4, ctx.currentTime + 0.24);
+            gainNode4.gain.setValueAtTime(0.1, ctx.currentTime + 0.26);
+            gainNode4.gain.setValueAtTime(0.4, ctx.currentTime + 0.28);
+            gainNode4.gain.setValueAtTime(0.02, ctx.currentTime + 0.3);
+            gainNode4.gain.setValueAtTime(0.4, ctx.currentTime + 0.32);
+            gainNode4.gain.setValueAtTime(0.15, ctx.currentTime + 0.34);
+            gainNode4.gain.setValueAtTime(0.4, ctx.currentTime + 0.36);
+            gainNode4.gain.setValueAtTime(0.05, ctx.currentTime + 0.38);
+            gainNode4.gain.setValueAtTime(0.4, ctx.currentTime + 0.4);
+            gainNode4.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+            
+            // Master gain - MAXIMUM VOLUME for harsh effect
+            masterGain.gain.setValueAtTime(1.0, ctx.currentTime);
+            masterGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+            
+            // Start all oscillators
+            oscillator1.start(ctx.currentTime);
+            oscillator2.start(ctx.currentTime);
+            oscillator3.start(ctx.currentTime);
+            oscillator4.start(ctx.currentTime);
+            
+            // Stop all oscillators
+            oscillator1.stop(ctx.currentTime + 0.5);
+            oscillator2.stop(ctx.currentTime + 0.5);
+            oscillator3.stop(ctx.currentTime + 0.5);
+            oscillator4.stop(ctx.currentTime + 0.5);
+            
+            return new Promise(resolve => {
+                oscillator1.onended = resolve;
+            });
+        } catch (error) {
+            console.warn('Harsh sound playback failed:', error);
+        }
+    }
+    
+    // Play harsh improvement alert sound
+    async function playHarshImprovementAlert() {
+        if (!soundNotificationsEnabled) return;
+        
+        if (isPlayingAlert) return;
+        isPlayingAlert = true;
+        
+        try {
+            await createHarshImprovementSound();
+        } catch (error) {
+            console.warn('Harsh improvement sound failed:', error);
         } finally {
             isPlayingAlert = false;
         }
@@ -1504,6 +2289,61 @@
             <div class="popup-content">
                 <div style="margin-bottom: 0.5rem;"><strong>Region:</strong> ${regionName}</div>
                 <div style="margin-bottom: 0.5rem;"><strong>Latency:</strong> ${latency} ms</div>
+                <div style="margin-bottom: 0.5rem;"><strong>IP Address:</strong> ${ipAddress}</div>
+                <div><strong>Time:</strong> ${now}</div>
+            </div>
+        `;
+        
+        // Add to page
+        document.body.appendChild(popup);
+        
+        // Show with animation
+        setTimeout(() => popup.classList.add('show'), 100);
+    }
+
+    // --- Latency Improvement Popup Notification ---
+    function showLatencyImprovementPopup(regionName, currentLatency, previousLatency, improvement) {
+        // Remove any existing improvement popup
+        const existingPopup = document.querySelector('.latency-improvement-popup');
+        if (existingPopup) {
+            existingPopup.remove();
+        }
+        
+        // Find the ping URL for this region
+        const rows = document.querySelectorAll('tbody tr');
+        let pingUrl = '';
+        for (const row of rows) {
+            const regionCell = row.querySelector('td:first-child');
+            const latencyCell = row.querySelector('.latency');
+            if (regionCell && latencyCell && regionCell.textContent.trim() === regionName) {
+                pingUrl = latencyCell.getAttribute('pingurl') || '';
+                break;
+            }
+        }
+        
+        const ipAddress = extractIpFromUrl(pingUrl);
+        const now = new Date().toLocaleString([], {
+            month: '2-digit',
+            day: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
+        
+        // Create popup element with detailed information
+        const popup = document.createElement('div');
+        popup.className = 'latency-improvement-popup';
+        popup.innerHTML = `
+            <button class="popup-close" onclick="this.parentElement.remove()">×</button>
+            <div class="popup-title">
+                ⚡ Latency Improvement Detected!
+            </div>
+            <div class="popup-content">
+                <div style="margin-bottom: 0.5rem;"><strong>Region:</strong> ${regionName}</div>
+                <div style="margin-bottom: 0.5rem;"><strong>Current Latency:</strong> ${currentLatency} ms</div>
+                <div style="margin-bottom: 0.5rem;"><strong>Previous Latency:</strong> ${previousLatency} ms</div>
+                <div style="margin-bottom: 0.5rem;"><strong>Improvement:</strong> ${improvement} ms</div>
                 <div style="margin-bottom: 0.5rem;"><strong>IP Address:</strong> ${ipAddress}</div>
                 <div><strong>Time:</strong> ${now}</div>
             </div>
@@ -1778,12 +2618,16 @@
         const label = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         let newLatencies = [];
         let lowLatencyEvents = [];
+        let improvementEvents = [];
         
-        // Ping all regions and collect results
+        // Ping regions sequentially, one at a time
         for (let i = 0; i < regionData.length; ++i) {
             const r = regionData[i];
             let elapsed = null;
             let timedOut = false;
+            
+            // Update the cell to show "connecting" status
+            r.cell.innerHTML = '<span style="color:var(--accent)">connecting</span>';
             
             try {
                 const abortController = new AbortController();
@@ -1792,7 +2636,11 @@
                     abortController.abort();
                 }, 5000);
                 
+                // First fetch to establish connection
                 await fetchUrl(r.pingUrl, r.supportsCors, abortController);
+                r.cell.innerHTML = '<span style="color:var(--accent)">pinging</span>';
+                
+                // Second fetch to measure latency
                 const startTime = currentTimeMillis();
                 await fetchUrl(r.pingUrl, r.supportsCors, abortController);
                 const endTime = currentTimeMillis();
@@ -1801,17 +2649,45 @@
                 
                 // Check for low latency events
                 if (elapsed !== null && elapsed < 100) {
-                    lowLatencyEvents.push({ region: r.name, latency: elapsed });
+                    // Only add to low latency events array if we should alert
+                    if (shouldAlertLowLatency(r.name, elapsed)) {
+                        lowLatencyEvents.push({ region: r.name, latency: elapsed });
+                    }
                 }
-                
             } catch (e) {
                 elapsed = null;
             }
-            
             newLatencies.push(elapsed);
+
+            // IMMEDIATE TABLE CELL UPDATE (but not chart/map)
+            let color = 'var(--success)';
+            let displayText = '';
+            let quality = getConnectionQuality(elapsed);
+            if (elapsed === null) {
+                displayText = 'timeout';
+                color = 'var(--error)';
+            } else {
+                displayText = `${elapsed} ms`;
+                if (elapsed < 60) {
+                    color = 'var(--success)';
+                } else if (elapsed < 100) {
+                    color = '#facc15'; // yellow-400
+                } else {
+                    color = 'var(--error)';
+                }
+            }
+            r.cell.innerHTML = `
+                <span style=\"color:${color}\">${displayText}</span>
+                <span class=\"connection-quality quality-${quality}\">${quality}</span>
+            `;
+
+            // Small delay between pings to make the sequential nature visible
+            if (i < regionData.length - 1) {
+                await new Promise(resolve => setTimeout(resolve, 200));
+            }
         }
         
-        // Update best server highlighting
+        // Now process all results after sequential pinging is complete
         updateBestServer(newLatencies);
         
         // Update all visual components with the same data
@@ -1819,6 +2695,29 @@
             const cell = regionData[i].cell;
             const latency = newLatencies[i];
             const regionName = regionData[i].name;
+            
+            // Check for latency improvements
+            if (latency !== null && previousLatencyData[regionName] && previousLatencyData[regionName].latency !== null) {
+                const previousLatency = previousLatencyData[regionName].latency;
+                const improvement = previousLatency - latency;
+                
+                // If improvement is 35ms or more, trigger improvement event
+                if (improvement >= 35) {
+                    improvementEvents.push({
+                        region: regionName,
+                        currentLatency: latency,
+                        previousLatency: previousLatency,
+                        improvement: improvement
+                    });
+                }
+            }
+            
+            // Store current data as previous for next comparison
+            previousLatencyData[regionName] = {
+                latency: latency,
+                timestamp: now,
+                status: latency === null ? 'timeout' : 'success'
+            };
             
             // Store latest latency data
             latestLatencyData[regionName] = {
@@ -1864,9 +2763,18 @@
             showLowLatencyPopup(event.region, event.latency);
         });
         
-        // Play sound alert if any low latency events
+        // Handle improvement events
+        improvementEvents.forEach(event => {
+            showLatencyImprovementPopup(event.region, event.currentLatency, event.previousLatency, event.improvement);
+        });
+        
+        // Play sound alerts
         if (lowLatencyEvents.length > 0) {
             playLowLatencyAlert();
+        }
+        
+        if (improvementEvents.length > 0) {
+            playHarshImprovementAlert();
         }
         
         // Update chart
